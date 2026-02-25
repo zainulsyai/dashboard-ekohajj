@@ -141,7 +141,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
     };
 
     return (
-        <div className="space-y-6 pb-10 animate-fade-in-up font-sans relative">
+        <>
             
             {/* Toast Notification */}
             {toast && (
@@ -194,81 +194,115 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
 
             {/* User Card Modal */}
             {isUserCardOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
                     <div 
                         className="absolute inset-0" 
                         onClick={() => setIsUserCardOpen(false)}
                     ></div>
-                    <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-sm w-full mx-auto overflow-hidden border border-white/20">
-                        {/* ID Card Design */}
-                        <div className="relative h-full bg-white">
-                            {/* Header Pattern */}
-                            <div className="h-32 bg-[#064E3B] relative overflow-hidden">
-                                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#10B981] rounded-full blur-3xl opacity-20 -mr-10 -mt-10"></div>
-                                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#D4AF37] rounded-full blur-2xl opacity-20 -ml-10 -mb-10"></div>
-                                
-                                <div className="absolute top-4 left-0 right-0 text-center">
-                                    <h3 className="text-white/90 text-[10px] font-bold tracking-[0.2em] uppercase">Kementerian Haji & Umrah RI</h3>
-                                    <h2 className="text-white font-bold text-lg mt-1">Kartu Identitas Digital</h2>
+                    
+                    {/* Landscape Card */}
+                    <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-3xl w-full mx-auto overflow-hidden flex flex-col md:flex-row min-h-[400px]">
+                        
+                        {/* Left Side: Visual Identity */}
+                        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex flex-col items-center justify-center p-8 text-white text-center z-10">
+                            {/* Decorative Patterns */}
+                            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+                            <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#D4AF37]/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+                            
+                            {/* Profile Image */}
+                            <div className="relative z-10 mb-5 group">
+                                <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:blur-2xl transition-all opacity-50"></div>
+                                <div className="w-40 h-40 rounded-full p-1.5 bg-white/20 backdrop-blur-md shadow-2xl relative">
+                                    <div className="w-full h-full rounded-full overflow-hidden border-[4px] border-white bg-white">
+                                        <img 
+                                            src={user.avatar} 
+                                            alt="Profile" 
+                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                        />
+                                    </div>
                                 </div>
+                            </div>
+                            
+                            {/* Identity Info */}
+                            <div className="relative z-10 space-y-2 w-full">
+                                <h2 className="text-2xl font-bold leading-tight text-white drop-shadow-md">{user.name}</h2>
+                                
+                                <div className="flex flex-col items-center gap-2">
+                                    <div className="inline-block px-4 py-1.5 bg-white/15 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
+                                        <p className="text-xs font-bold tracking-widest uppercase text-white/95">{user.role}</p>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#D4AF37]/20 rounded-full border border-[#D4AF37]/30">
+                                        <span className="text-[10px] uppercase tracking-wider font-bold text-[#D4AF37]">ID Panitia</span>
+                                        <span className="text-xs font-mono font-bold text-white">{user.id}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                <button 
-                                    onClick={() => setIsUserCardOpen(false)}
-                                    className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors"
-                                >
-                                    <X size={20} />
-                                </button>
+                        {/* Right Side: Account Details */}
+                        <div className="w-full md:w-7/12 bg-white p-8 relative flex flex-col justify-center">
+                            {/* Close Button */}
+                            <button 
+                                onClick={() => setIsUserCardOpen(false)}
+                                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all z-20"
+                            >
+                                <X size={20} />
+                            </button>
+
+                            {/* Header */}
+                            <div className="mb-6 border-b border-gray-100 pb-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="p-1.5 bg-emerald-50 rounded-lg text-emerald-600">
+                                        <Shield size={18} />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-800">Detail Akun</h3>
+                                </div>
+                                <p className="text-gray-500 text-xs">Informasi kredensial dan status akun Anda.</p>
                             </div>
 
-                            {/* Profile Content */}
-                            <div className="px-6 pb-8 relative">
-                                <div className="flex justify-center -mt-16 mb-4">
-                                    <div className="p-1.5 bg-white rounded-full shadow-lg">
-                                        <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-[#064E3B]/10">
-                                            <img 
-                                                src={user.avatar} 
-                                                alt="Profile" 
-                                                className="w-full h-full object-cover"
-                                            />
+                            {/* Details Grid */}
+                            <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-emerald-200 transition-colors group">
+                                        <div className="flex items-center gap-1.5 mb-1 text-gray-400 group-hover:text-emerald-600 transition-colors">
+                                            <UserIcon size={14} />
+                                            <p className="text-[10px] font-bold uppercase tracking-wider">Username</p>
                                         </div>
+                                        <p className="text-sm font-bold text-gray-800 truncate">{user.username || '-'}</p>
+                                    </div>
+
+                                    <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-emerald-200 transition-colors group">
+                                        <div className="flex items-center gap-1.5 mb-1 text-gray-400 group-hover:text-emerald-600 transition-colors">
+                                            <Shield size={14} />
+                                            <p className="text-[10px] font-bold uppercase tracking-wider">Password</p>
+                                        </div>
+                                        <p className="text-sm font-bold text-gray-800 font-mono tracking-wider truncate">{user.password || '******'}</p>
                                     </div>
                                 </div>
 
-                                <div className="text-center space-y-1 mb-6">
-                                    <h2 className="text-xl font-bold text-gray-900">{user.name}</h2>
-                                    <p className="text-sm font-medium text-[#064E3B]">{user.role}</p>
-                                    <div className="flex flex-col gap-2 mt-3">
-                                        <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">ID Panitia</span>
-                                            <span className="text-sm font-mono font-bold text-gray-800">{user.id}</span>
-                                        </div>
-                                        <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Username</span>
-                                            <span className="text-sm font-mono font-bold text-gray-800">{user.username || '-'}</span>
-                                        </div>
-                                        <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Password</span>
-                                            <span className="text-sm font-mono font-bold text-gray-800">{user.password || '******'}</span>
-                                        </div>
+                                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-emerald-200 transition-colors group">
+                                    <div className="flex items-center gap-1.5 mb-1 text-gray-400 group-hover:text-emerald-600 transition-colors">
+                                        <Mail size={14} />
+                                        <p className="text-[10px] font-bold uppercase tracking-wider">Email Resmi</p>
                                     </div>
+                                    <p className="text-sm font-medium text-gray-800 truncate">{user.email}</p>
                                 </div>
 
-                                {/* QR Code Placeholder */}
-                                <div className="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center gap-2 mb-6 group cursor-pointer hover:bg-gray-100 transition-colors">
-                                    <div className="w-32 h-32 bg-white p-2 rounded-lg shadow-sm">
-                                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${user.id}-${user.email}`} alt="QR Code" className="w-full h-full opacity-90 group-hover:opacity-100 transition-opacity" />
+                                <div className="flex items-center justify-between p-3 bg-emerald-50/50 rounded-xl border border-emerald-100">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                            <Check size={16} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-800">Status Akun</p>
+                                            <p className="text-[10px] text-emerald-600 font-medium">Terverifikasi & Aktif</p>
+                                        </div>
                                     </div>
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Scan untuk Verifikasi</p>
+                                    <div className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                                        Active
+                                    </div>
                                 </div>
-
-                                <button 
-                                    onClick={() => handleEditProfile()}
-                                    className="w-full py-3 bg-[#064E3B] hover:bg-[#053d2e] text-white rounded-xl font-bold text-sm shadow-lg shadow-[#064E3B]/20 transition-all flex items-center justify-center gap-2"
-                                >
-                                    <SettingsIconLucide size={16} />
-                                    Edit Profil Saya
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -475,6 +509,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
             )}
 
             {/* Hero Section - User Profile */}
+            <div className="space-y-6 pb-10 animate-fade-in-up font-sans relative">
             <HeroSection 
                 title={
                     <div className="flex items-center gap-3 flex-wrap">
@@ -787,7 +822,8 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
             <div className="text-center pt-6 pb-2">
                 <p className="text-[10px] text-gray-400 font-mono tracking-wider opacity-60 hover:opacity-100 transition-opacity cursor-default">Version 1.0.2 (Build 2026.02.21)</p>
             </div>
-        </div>
+            </div>
+        </>
     );
 };
 
