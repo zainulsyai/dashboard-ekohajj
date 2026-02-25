@@ -316,74 +316,94 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                         className="absolute inset-0" 
                         onClick={() => setIsProfileModalOpen(false)}
                     ></div>
-                    <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-md w-full mx-auto overflow-hidden">
-                        {/* Header Background */}
-                        <div className="h-32 bg-gradient-to-r from-[#064E3B] to-[#10B981] relative">
-                            <button 
-                                onClick={() => setIsProfileModalOpen(false)}
-                                className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full backdrop-blur-md transition-colors z-10"
-                            >
-                                <X size={20} />
-                            </button>
-                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                        </div>
-
-                        {/* Profile Image & Content */}
-                        <div className="px-6 pb-6 relative">
-                            <div className="relative -mt-16 mb-4 flex justify-center">
-                                <div className="relative group">
-                                    <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white relative group">
+                    <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-4xl w-full mx-auto overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+                        
+                        {/* Left Side: Visual Identity (Editable) */}
+                        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex flex-col items-center justify-center p-8 text-white text-center z-10">
+                            {/* Decorative Patterns */}
+                            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+                            <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#D4AF37]/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+                            
+                            {/* Profile Image Edit */}
+                            <div className="relative z-10 mb-5 group">
+                                <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:blur-2xl transition-all opacity-50"></div>
+                                <div className="w-40 h-40 rounded-full p-1.5 bg-white/20 backdrop-blur-md shadow-2xl relative group cursor-pointer">
+                                    <div className="w-full h-full rounded-full overflow-hidden border-[4px] border-white bg-white relative">
                                         <img 
                                             src={editAvatar} 
                                             alt="Profile" 
                                             className="w-full h-full object-cover"
                                         />
-                                        {/* Hidden file input */}
-                                        <input 
-                                            type="file" 
-                                            id="avatar-upload" 
-                                            accept="image/png, image/jpeg" 
-                                            className="hidden" 
-                                            onChange={(e) => {
-                                                if (e.target.files && e.target.files[0]) {
-                                                    const file = e.target.files[0];
-                                                    const reader = new FileReader();
-                                                    reader.onloadend = () => {
-                                                        setEditAvatar(reader.result as string);
-                                                        showToast("Foto profil berhasil dipilih", 'success');
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                }
-                                            }}
-                                        />
-                                        
-                                        {/* Overlay with actions on hover */}
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <label htmlFor="avatar-upload" className="p-2 bg-white/20 hover:bg-white/40 rounded-full text-white cursor-pointer backdrop-blur-sm transition-colors" title="Ganti Foto">
-                                                <Camera size={18} />
-                                            </label>
-                                            <button 
-                                                onClick={() => {
-                                                    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(editName)}&background=random&color=fff`;
-                                                    setEditAvatar(defaultAvatar);
-                                                    showToast("Foto profil direset", 'info');
-                                                }}
-                                                className="p-2 bg-red-500/80 hover:bg-red-600 rounded-full text-white cursor-pointer backdrop-blur-sm transition-colors" 
-                                                title="Hapus Foto"
-                                            >
-                                                <X size={18} />
-                                            </button>
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col gap-2">
+                                            <Camera size={24} className="text-white" />
+                                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">Ubah Foto</span>
                                         </div>
                                     </div>
+                                    
+                                    {/* Hidden file input */}
+                                    <input 
+                                        type="file" 
+                                        id="avatar-upload" 
+                                        accept="image/png, image/jpeg" 
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                        onChange={(e) => {
+                                            if (e.target.files && e.target.files[0]) {
+                                                const file = e.target.files[0];
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    setEditAvatar(reader.result as string);
+                                                    showToast("Foto profil berhasil dipilih", 'success');
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                    />
                                 </div>
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(editName)}&background=random&color=fff`;
+                                        setEditAvatar(defaultAvatar);
+                                        showToast("Foto profil direset", 'info');
+                                    }}
+                                    className="absolute -bottom-2 -right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-lg transition-transform hover:scale-110 z-30" 
+                                    title="Hapus Foto"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                            
+                            {/* Identity Info Preview */}
+                            <div className="relative z-10 space-y-2 w-full">
+                                <h2 className="text-2xl font-bold leading-tight text-white drop-shadow-md">{editName || user.name}</h2>
+                                <p className="text-xs text-emerald-100 font-medium">Klik foto untuk mengubah</p>
+                            </div>
+                        </div>
+
+                        {/* Right Side: Edit Form */}
+                        <div className="w-full md:w-7/12 bg-white p-8 relative flex flex-col h-full overflow-y-auto max-h-[90vh] md:max-h-none">
+                            {/* Close Button */}
+                            <button 
+                                onClick={() => setIsProfileModalOpen(false)}
+                                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all z-20"
+                            >
+                                <X size={20} />
+                            </button>
+
+                            {/* Header */}
+                            <div className="mb-6 border-b border-gray-100 pb-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="p-1.5 bg-emerald-50 rounded-lg text-emerald-600">
+                                        <SettingsIconLucide size={18} />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-800">Edit Profil</h3>
+                                </div>
+                                <p className="text-gray-500 text-xs">Perbarui informasi akun Anda.</p>
                             </div>
 
-                            <div className="text-center mb-6">
-                                <h3 className="text-xl font-bold text-gray-800">Edit Profil</h3>
-                                <p className="text-xs text-gray-500">Perbarui informasi akun Anda</p>
-                            </div>
-
-                            <div className="space-y-4">
+                            {/* Form Grid */}
+                            <div className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
                                     <input 
@@ -393,15 +413,29 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                         className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
                                     />
                                 </div>
-                                
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Username</label>
-                                    <input 
-                                        type="text" 
-                                        value={editUsername}
-                                        onChange={(e) => setEditUsername(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
-                                    />
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Username</label>
+                                        <input 
+                                            type="text" 
+                                            value={editUsername}
+                                            onChange={(e) => setEditUsername(e.target.value)}
+                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">ID Panitia</label>
+                                        <input 
+                                            type="text" 
+                                            value={editId}
+                                            onChange={(e) => {
+                                                if (/^\d*$/.test(e.target.value)) setEditId(e.target.value);
+                                            }}
+                                            minLength={7}
+                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>
@@ -429,32 +463,6 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                             className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
                                         />
                                     )}
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">ID Panitia</label>
-                                        <input 
-                                            type="text" 
-                                            value={editId}
-                                            onChange={(e) => {
-                                                // Only allow numbers
-                                                if (/^\d*$/.test(e.target.value)) {
-                                                    setEditId(e.target.value);
-                                                }
-                                            }}
-                                            minLength={7}
-                                            placeholder="Min. 7 digit angka"
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Status</label>
-                                        <div className="w-full px-4 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-sm font-bold text-emerald-700 flex items-center gap-2">
-                                            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                                            Active
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div>
@@ -488,19 +496,19 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                 </div>
                             </div>
 
-                            <div className="mt-8 flex gap-3">
+                            <div className="mt-6 flex gap-3 pt-4 border-t border-gray-100">
                                 <button 
                                     onClick={() => setIsProfileModalOpen(false)}
-                                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors text-sm"
+                                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors text-sm"
                                 >
                                     Batal
                                 </button>
                                 <button 
                                     onClick={handleSaveProfile}
-                                    className="flex-1 px-4 py-3 bg-[#064E3B] hover:bg-[#053d2e] text-white rounded-xl font-bold transition-colors text-sm shadow-lg shadow-[#064E3B]/20 flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2.5 bg-[#064E3B] hover:bg-[#053d2e] text-white rounded-xl font-bold transition-colors text-sm shadow-lg shadow-[#064E3B]/20 flex items-center justify-center gap-2"
                                 >
                                     <Save size={18} />
-                                    Simpan Perubahan
+                                    Simpan
                                 </button>
                             </div>
                         </div>
