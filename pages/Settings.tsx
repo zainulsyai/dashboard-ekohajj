@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { User as UserIcon, Bell, Moon, Shield, Database, LogOut, ChevronRight, Save, RefreshCw, Download, HelpCircle, Mail, Settings as SettingsIconLucide, X, Globe, Check, AlertTriangle, Camera, Eye, EyeOff } from 'lucide-react';
+import { User as UserIcon, Bell, Moon, Shield, Database, LogOut, ChevronRight, Save, RefreshCw, Download, HelpCircle, Mail, Settings as SettingsIconLucide, X, Globe, Check, AlertTriangle, Camera, Eye, EyeOff, LayoutDashboard, Users, FileText } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
 import { useUser } from '../contexts/UserContext';
 import { Page } from '../types';
@@ -38,6 +38,51 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
     const [editAvatar, setEditAvatar] = useState(user.avatar); // Add avatar state
     const [showPassword, setShowPassword] = useState(false);
     const [editingUserId, setEditingUserId] = useState<string | null>(null); // Track which user is being edited
+
+    // Access Rights State
+    const [rolePermissions, setRolePermissions] = useState<Record<string, Record<string, boolean>>>({
+        'Administrator EkoHajj': {
+            'dashboard_access': true,
+            'user_management': true,
+            'report_generation': true,
+            'system_config': true,
+            'data_export': true,
+        },
+        'Eksekutif EkoHajj': {
+            'dashboard_access': true,
+            'user_management': false,
+            'report_generation': true,
+            'system_config': false,
+            'data_export': true,
+        },
+        'Surveyor EkoHajj': {
+            'dashboard_access': true,
+            'user_management': false,
+            'report_generation': false,
+            'system_config': false,
+            'data_export': false,
+        }
+    });
+    const [selectedRole, setSelectedRole] = useState<string>('Administrator EkoHajj');
+
+    const handlePermissionToggle = (role: string, permission: string) => {
+        setRolePermissions(prev => ({
+            ...prev,
+            [role]: {
+                ...prev[role],
+                [permission]: !prev[role][permission]
+            }
+        }));
+        showToast(`Izin ${permission} untuk ${role} diperbarui`, 'success');
+    };
+
+    const permissionConfig = {
+        'dashboard_access': { label: 'Akses Dashboard', desc: 'Melihat ringkasan data utama', icon: LayoutDashboard, color: 'text-blue-600', bg: 'bg-blue-50' },
+        'user_management': { label: 'Manajemen Pengguna', desc: 'Tambah, edit, & hapus user', icon: Users, color: 'text-orange-600', bg: 'bg-orange-50' },
+        'report_generation': { label: 'Buat Laporan', desc: 'Akses & cetak laporan lengkap', icon: FileText, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+        'system_config': { label: 'Konfigurasi Sistem', desc: 'Pengaturan global aplikasi', icon: SettingsIconLucide, color: 'text-slate-600', bg: 'bg-slate-50' },
+        'data_export': { label: 'Export Data', desc: 'Unduh data dalam format CSV/PDF', icon: Download, color: 'text-purple-600', bg: 'bg-purple-50' }
+    };
 
     useEffect(() => {
         if (isProfileModalOpen) {
@@ -622,69 +667,98 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                         action={<div className="p-2 bg-purple-50 rounded-lg text-purple-700 shadow-sm"><Shield size={18}/></div>}
                         className="!bg-white/80"
                     >
-                        <div className="space-y-3">
-                            <div className="p-4 rounded-xl bg-purple-50/50 border border-purple-100">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
-                                        <Shield size={18} />
+                        <div className="space-y-4">
+                            {user.role === 'Administrator EkoHajj' ? (
+                                <>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Role</label>
+                                        <div className="relative">
+                                            <select
+                                                value={selectedRole}
+                                                onChange={(e) => setSelectedRole(e.target.value)}
+                                                className="pl-3 pr-8 py-2 bg-purple-50 border border-purple-100 rounded-lg text-xs font-bold text-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-200 appearance-none cursor-pointer shadow-sm hover:bg-purple-100 transition-colors"
+                                            >
+                                                <option value="Administrator EkoHajj">Administrator</option>
+                                                <option value="Eksekutif EkoHajj">Eksekutif</option>
+                                                <option value="Surveyor EkoHajj">Surveyor</option>
+                                            </select>
+                                            <ChevronRight size={14} className="absolute right-2 top-1/2 -translate-y-1/2 rotate-90 text-purple-500 pointer-events-none" />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-gray-800">{user.role}</h4>
-                                        <p className="text-[10px] text-gray-500">Level Akses Saat Ini</p>
+
+                                    <div className="space-y-3 bg-gray-50/50 p-1 rounded-xl border border-gray-100">
+                                        {Object.entries(permissionConfig).map(([key, config]) => {
+                                            const Icon = config.icon;
+                                            const isEnabled = rolePermissions[selectedRole][key];
+                                            return (
+                                                <div key={key} className={`flex items-center justify-between p-3 rounded-xl transition-all border ${isEnabled ? 'bg-white border-purple-100 shadow-sm' : 'bg-transparent border-transparent hover:bg-white hover:shadow-sm'}`}>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`p-2 rounded-lg ${isEnabled ? config.bg + ' ' + config.color : 'bg-gray-100 text-gray-400'}`}>
+                                                            <Icon size={18} />
+                                                        </div>
+                                                        <div>
+                                                            <h4 className={`text-xs font-bold ${isEnabled ? 'text-gray-800' : 'text-gray-500'}`}>{config.label}</h4>
+                                                            <p className="text-[10px] text-gray-400">{config.desc}</p>
+                                                        </div>
+                                                    </div>
+                                                    <Toggle 
+                                                        checked={isEnabled} 
+                                                        onChange={() => handlePermissionToggle(selectedRole, key)} 
+                                                    />
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    
+                                    <div className="mt-2 flex items-center justify-center gap-1.5 text-[10px] text-gray-400 italic">
+                                        <RefreshCw size={10} className="animate-spin-slow" />
+                                        <span>Perubahan hak akses tersimpan otomatis</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="p-4 rounded-xl bg-purple-50/30 border border-purple-100">
+                                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-purple-100">
+                                        <div className="p-2.5 bg-purple-100 text-purple-600 rounded-xl shadow-sm">
+                                            <Shield size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-gray-800">{user.role}</h4>
+                                            <div className="flex items-center gap-1.5 mt-0.5">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                                <p className="text-[10px] text-gray-500 font-medium">Status Akun: Aktif</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="space-y-3">
+                                        {Object.entries(permissionConfig).map(([key, config]) => {
+                                            const Icon = config.icon;
+                                            const isEnabled = rolePermissions[user.role][key];
+                                            return (
+                                                <div key={key} className="flex items-center justify-between group">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`p-1.5 rounded-lg transition-colors ${isEnabled ? 'bg-white text-purple-600 shadow-sm' : 'bg-gray-100 text-gray-400'}`}>
+                                                            <Icon size={14} />
+                                                        </div>
+                                                        <span className={`text-xs font-medium transition-colors ${isEnabled ? 'text-gray-700' : 'text-gray-400 line-through decoration-gray-300'}`}>
+                                                            {config.label}
+                                                        </span>
+                                                    </div>
+                                                    {isEnabled ? (
+                                                        <div className="bg-emerald-100 text-emerald-600 p-1 rounded-full">
+                                                            <Check size={12} strokeWidth={3} />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="bg-gray-100 text-gray-400 p-1 rounded-full">
+                                                            <X size={12} strokeWidth={3} />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
-                                
-                                <div className="space-y-2">
-                                    {user.role === 'Administrator EkoHajj' && (
-                                        <>
-                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                <Check size={14} className="text-emerald-500" />
-                                                <span>Akses Penuh Sistem</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                <Check size={14} className="text-emerald-500" />
-                                                <span>Manajemen Pengguna (Edit/Hapus)</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                <Check size={14} className="text-emerald-500" />
-                                                <span>Konfigurasi Global</span>
-                                            </div>
-                                        </>
-                                    )}
-                                    {user.role === 'Eksekutif EkoHajj' && (
-                                        <>
-                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                <Check size={14} className="text-emerald-500" />
-                                                <span>Dashboard Eksekutif</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                <Check size={14} className="text-emerald-500" />
-                                                <span>Laporan & Analitik Lengkap</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-gray-400">
-                                                <X size={14} className="text-red-400" />
-                                                <span>Manajemen Pengguna</span>
-                                            </div>
-                                        </>
-                                    )}
-                                    {user.role === 'Surveyor EkoHajj' && (
-                                        <>
-                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                <Check size={14} className="text-emerald-500" />
-                                                <span>Input Data Lapangan</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                <Check size={14} className="text-emerald-500" />
-                                                <span>Upload Bukti Foto</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-gray-400">
-                                                <X size={14} className="text-red-400" />
-                                                <span>Akses Laporan Eksekutif</span>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </GlassCard>
                 </div>
