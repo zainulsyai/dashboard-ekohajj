@@ -6,6 +6,7 @@ import { Save, Signal, ArrowLeft, Globe, User, Users, MapPin, Calendar, FileText
 import { useData } from '../../contexts/DataContext';
 import { TelecomRecord } from '../../types';
 import { useLayout } from '../../contexts/LayoutContext';
+import { useUser } from '../../contexts/UserContext';
 
 interface TelecomFormProps {
     onBack: () => void;
@@ -14,6 +15,7 @@ interface TelecomFormProps {
 export const TelecomForm: React.FC<TelecomFormProps> = ({ onBack }) => {
   const { telecomData, setTelecomData } = useData();
   const { sidebarOpen } = useLayout();
+  const { user } = useUser();
 
   // Identity State matching PDF Page 14
   const [respondentName, setRespondentName] = useState(''); 
@@ -21,7 +23,7 @@ export const TelecomForm: React.FC<TelecomFormProps> = ({ onBack }) => {
   const [embarkation, setEmbarkation] = useState(''); 
   const [province, setProvince] = useState(''); 
   const [surveyDate, setSurveyDate] = useState(''); 
-  const [surveyor, setSurveyor] = useState(''); 
+  const [surveyor, setSurveyor] = useState(user?.name || ''); 
 
   // Sync identity
   const updateIdentity = (field: keyof TelecomRecord, value: string) => {

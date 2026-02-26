@@ -6,6 +6,7 @@ import { RiceRecord } from '../../types';
 import { Save, ArrowLeft, MapPin, Calendar, Clock, User, ShoppingCart, Building2, Scale, ScrollText, CheckCircle2, Globe, DollarSign, FileText, Plus, Trash2, RotateCcw, Send } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 import { useLayout } from '../../contexts/LayoutContext';
+import { useUser } from '../../contexts/UserContext';
 
 interface RiceFormProps {
   onBack: () => void;
@@ -14,12 +15,13 @@ interface RiceFormProps {
 export const RiceForm: React.FC<RiceFormProps> = ({ onBack }) => {
   const { riceData, setRiceData } = useData();
   const { sidebarOpen } = useLayout();
+  const { user } = useUser();
   const [kitchenName, setKitchenName] = useState('');
   const [address, setAddress] = useState('');
   const [pic, setPic] = useState('');
   const [monitorDate, setMonitorDate] = useState('');
   const [monitorTime, setMonitorTime] = useState('');
-  const [surveyor, setSurveyor] = useState('');
+  const [surveyor, setSurveyor] = useState(user?.name || '');
 
   // Sync identity
   const updateIdentity = (field: keyof RiceRecord, value: string) => {

@@ -6,6 +6,7 @@ import { Save, Plus, Trash2, ArrowLeft, UtensilsCrossed, MapPin, User, Calendar,
 import { RTERecord } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { useLayout } from '../../contexts/LayoutContext';
+import { useUser } from '../../contexts/UserContext';
 
 interface RTEFormProps {
     onBack: () => void;
@@ -14,6 +15,7 @@ interface RTEFormProps {
 export const RTEForm: React.FC<RTEFormProps> = ({ onBack }) => {
   const { rteData, setRteData } = useData();
   const { sidebarOpen } = useLayout();
+  const { user } = useUser();
   
   // Identity state matching PDF Page 7
   const [kitchenName, setKitchenName] = useState(''); 
@@ -23,7 +25,7 @@ export const RTEForm: React.FC<RTEFormProps> = ({ onBack }) => {
   const [kloterName, setKloterName] = useState('');
   const [monitorDate, setMonitorDate] = useState(''); 
   const [monitorTime, setMonitorTime] = useState(''); 
-  const [surveyor, setSurveyor] = useState(''); 
+  const [surveyor, setSurveyor] = useState(user?.name || ''); 
 
   // Sync identity to all records
   const updateIdentity = (field: keyof RTERecord, value: string) => {

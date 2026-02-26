@@ -6,6 +6,7 @@ import { ExpeditionRecord } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { Input } from '../../components/InputFields';
 import { useLayout } from '../../contexts/LayoutContext';
+import { useUser } from '../../contexts/UserContext';
 
 interface ExpeditionFormProps {
     onBack: () => void;
@@ -14,11 +15,12 @@ interface ExpeditionFormProps {
 export const ExpeditionForm: React.FC<ExpeditionFormProps> = ({ onBack }) => {
   const { expeditionData, setExpeditionData } = useData();
   const { sidebarOpen } = useLayout();
+  const { user } = useUser();
 
   const [hotelName, setHotelName] = useState(''); 
   const [address, setAddress] = useState(''); 
   const [sector, setSector] = useState(''); 
-  const [surveyor, setSurveyor] = useState(''); 
+  const [surveyor, setSurveyor] = useState(user?.name || ''); 
   const [surveyDate, setSurveyDate] = useState(''); 
   const [surveyTime, setSurveyTime] = useState(''); 
 

@@ -6,6 +6,7 @@ import { BumbuRecord } from '../../types';
 import { Save, Search, ChefHat, ArrowLeft, ChevronDown, ChevronUp, MapPin, Calendar, Clock, User, ClipboardList, Package, DollarSign, Globe, FileText, AlertCircle, Building2, RotateCcw, Send } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 import { useLayout } from '../../contexts/LayoutContext';
+import { useUser } from '../../contexts/UserContext';
 
 interface SpiceFormProps {
   onBack: () => void;
@@ -14,6 +15,7 @@ interface SpiceFormProps {
 export const SpiceForm: React.FC<SpiceFormProps> = ({ onBack }) => {
   const { bumbuMakkah, setBumbuMakkah, bumbuMadinah, setBumbuMadinah } = useData();
   const { sidebarOpen } = useLayout();
+  const { user } = useUser();
   const [activeTab, setActiveTab] = useState<'Makkah' | 'Madinah'>('Makkah');
   const [searchTerm, setSearchTerm] = useState('');
   const [isIdentityExpanded, setIsIdentityExpanded] = useState(true);
@@ -29,7 +31,7 @@ export const SpiceForm: React.FC<SpiceFormProps> = ({ onBack }) => {
   const [pic, setPic] = useState('');
   const [monitorDate, setMonitorDate] = useState('');
   const [monitorTime, setMonitorTime] = useState('');
-  const [surveyor, setSurveyor] = useState('');
+  const [surveyor, setSurveyor] = useState(user?.name || '');
 
   // Helper to update identity fields in bulk for all records
   const updateIdentity = (field: keyof BumbuRecord, value: string) => {

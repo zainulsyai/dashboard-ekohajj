@@ -6,6 +6,7 @@ import { Save, Store, Plus, Trash2, ArrowLeft, MapPin, User, Calendar, Building,
 import { TenantRecord } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { useLayout } from '../../contexts/LayoutContext';
+import { useUser } from '../../contexts/UserContext';
 
 interface TenantFormProps {
     onBack: () => void;
@@ -14,11 +15,12 @@ interface TenantFormProps {
 export const TenantForm: React.FC<TenantFormProps> = ({ onBack }) => {
   const { tenantData, setTenantData } = useData();
   const { sidebarOpen } = useLayout();
+  const { user } = useUser();
 
   const [hotelName, setHotelName] = useState(''); 
   const [address, setAddress] = useState(''); 
   const [sector, setSector] = useState(''); 
-  const [surveyor, setSurveyor] = useState(''); 
+  const [surveyor, setSurveyor] = useState(user?.name || ''); 
   const [surveyDate, setSurveyDate] = useState(''); 
   const [surveyTime, setSurveyTime] = useState(''); 
 
