@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { ChefHat, UtensilsCrossed, Truck, Store, Signal, Download, Printer, Filter, Search, MapPin, User, Calendar, Clock, Building, ShoppingCart, ChevronDown, Check, ArrowDownUp, Database } from 'lucide-react';
+import { ChefHat, UtensilsCrossed, Truck, Store, Signal, Download, Printer, Filter, Search, MapPin, User, Calendar, Clock, Building, ShoppingCart, ChevronDown, Check, ArrowDownUp, Database, X, Building2, Package, DollarSign, FileText, Globe, ShoppingBag, TrendingUp, Scale, CheckCircle2 } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
 import { TableRowSkeleton } from '../components/Skeletons';
 import { HeroSection } from '../components/HeroSection';
@@ -14,10 +14,11 @@ const TableHeader = ({ children }: React.PropsWithChildren<{}>) => (
   </th>
 );
 
-const TableRow = ({ children, idx, style }: React.PropsWithChildren<{ idx: number; style?: React.CSSProperties }>) => (
+const TableRow = ({ children, idx, style, onClick }: React.PropsWithChildren<{ idx: number; style?: React.CSSProperties; onClick?: () => void }>) => (
   <tr 
     style={style}
-    className={`transition-all duration-300 hover:bg-[#064E3B]/5 ${idx % 2 === 0 ? 'bg-white/30' : 'bg-transparent'} animate-fade-in-up opacity-0 fill-mode-forwards`}
+    onClick={onClick}
+    className={`transition-all duration-300 hover:bg-[#064E3B]/5 ${idx % 2 === 0 ? 'bg-white/30' : 'bg-transparent'} animate-fade-in-up opacity-0 fill-mode-forwards cursor-pointer`}
   >
       {children}
   </tr>
@@ -32,6 +33,7 @@ export const Reports: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMode, setFilterMode] = useState<'newest' | 'oldest' | 'highest_vol' | 'highest_price'>('newest');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
   // --- DATA PROCESSING LOGIC ---
   const processedData = useMemo(() => {
@@ -179,7 +181,7 @@ export const Reports: React.FC = () => {
               return (
                 <tbody key={activeTab} className="divide-y divide-gray-100">
                     {processedData.map((row: any, idx) => (
-                        <TableRow key={idx} idx={idx} style={getDelay(idx)}>
+                        <TableRow key={idx} idx={idx} style={getDelay(idx)} onClick={() => setSelectedItem(row)}>
                             <td className="px-6 py-4">
                                 <div className="font-bold text-gray-700">{row.name}</div>
                                 <div className="text-[10px] text-gray-400 font-medium">{row.companyName}</div>
@@ -218,7 +220,7 @@ export const Reports: React.FC = () => {
               return (
                 <tbody key={activeTab} className="divide-y divide-gray-100">
                     {processedData.map((row: any, idx) => (
-                        <TableRow key={row.id} idx={idx} style={getDelay(idx)}>
+                        <TableRow key={row.id} idx={idx} style={getDelay(idx)} onClick={() => setSelectedItem(row)}>
                             <td className="px-6 py-4">
                                 <div className="font-bold text-[#064E3B]">{row.companyName}</div>
                             </td>
@@ -249,7 +251,7 @@ export const Reports: React.FC = () => {
                return (
                 <tbody key={activeTab} className="divide-y divide-gray-100">
                     {processedData.map((row: any, idx) => (
-                        <TableRow key={row.id} idx={idx} style={getDelay(idx)}>
+                        <TableRow key={row.id} idx={idx} style={getDelay(idx)} onClick={() => setSelectedItem(row)}>
                             <td className="px-6 py-4">
                                 <div className="font-bold text-[#064E3B]">{row.companyName}</div>
                             </td>
@@ -286,7 +288,7 @@ export const Reports: React.FC = () => {
                return (
                 <tbody key={activeTab} className="divide-y divide-gray-100">
                     {processedData.map((row: any, idx) => (
-                        <TableRow key={row.id} idx={idx} style={getDelay(idx)}>
+                        <TableRow key={row.id} idx={idx} style={getDelay(idx)} onClick={() => setSelectedItem(row)}>
                             <td className="px-6 py-4">
                                 <div className="font-bold text-[#064E3B]">{row.shopName}</div>
                             </td>
@@ -323,7 +325,7 @@ export const Reports: React.FC = () => {
               return (
                 <tbody key={activeTab} className="divide-y divide-gray-100">
                     {processedData.map((row: any, idx) => (
-                        <TableRow key={row.id} idx={idx} style={getDelay(idx)}>
+                        <TableRow key={row.id} idx={idx} style={getDelay(idx)} onClick={() => setSelectedItem(row)}>
                             <td className="px-6 py-4 font-bold text-[#064E3B]">{row.companyName}</td>
                             <td className="px-6 py-4">
                                 <div className="flex items-center gap-1.5 text-xs font-bold text-gray-700">
@@ -355,7 +357,7 @@ export const Reports: React.FC = () => {
               return (
                 <tbody key={activeTab} className="divide-y divide-gray-100">
                     {processedData.map((row: any, idx) => (
-                        <TableRow key={row.id} idx={idx} style={getDelay(idx)}>
+                        <TableRow key={row.id} idx={idx} style={getDelay(idx)} onClick={() => setSelectedItem(row)}>
                             <td className="px-6 py-4 font-bold text-[#064E3B]">{row.providerName}</td>
                             <td className="px-6 py-4">
                                 <div className="text-xs font-bold text-gray-700">{row.respondentName || '-'}</div>
@@ -409,7 +411,11 @@ export const Reports: React.FC = () => {
       return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden animate-fade-in-up">
               {processedData.map((row: any, idx) => (
-                  <div key={idx} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
+                  <div 
+                    key={idx} 
+                    onClick={() => setSelectedItem(row)}
+                    className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden cursor-pointer"
+                  >
                       {/* Decoration */}
                       <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
 
@@ -567,6 +573,167 @@ export const Reports: React.FC = () => {
       { id: 'highest_price', label: 'Harga Tertinggi' },
   ];
 
+  // Detail Modal Component
+  const DetailModal = () => {
+    if (!selectedItem) return null;
+
+    const DetailRow = ({ label, value, icon: Icon }: any) => (
+      <div className="group flex items-start gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-[#064E3B]/20 transition-all duration-300">
+        <div className="p-2.5 bg-[#064E3B]/5 rounded-xl text-[#064E3B] shrink-0 group-hover:bg-[#064E3B] group-hover:text-[#D4AF37] transition-colors duration-300">
+          <Icon size={18} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+          <p className="text-sm font-bold text-gray-800 break-words leading-snug">{value || '-'}</p>
+        </div>
+      </div>
+    );
+
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+        <div 
+            className="absolute inset-0 bg-[#064E3B]/20 backdrop-blur-md transition-opacity animate-fade-in" 
+            onClick={() => setSelectedItem(null)}
+        />
+        <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl ring-1 ring-black/5 overflow-hidden animate-zoom-in flex flex-col max-h-[85vh]">
+            {/* Header */}
+            <div className="relative h-40 bg-gradient-to-br from-[#064E3B] to-[#043025] flex items-end p-8 overflow-hidden shrink-0">
+                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                
+                {/* Decorative Circles */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full mix-blend-overlay opacity-20 blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-400 rounded-full mix-blend-overlay opacity-10 blur-2xl translate-y-1/3 -translate-x-1/3"></div>
+                
+                <button 
+                    onClick={() => setSelectedItem(null)}
+                    className="absolute top-6 right-6 p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all duration-300 backdrop-blur-md z-20 group border border-white/10 hover:border-white/30 hover:rotate-90"
+                >
+                    <X size={20} />
+                </button>
+
+                <div className="relative z-10 w-full">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                        <span className="px-3 py-1 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm">
+                            {activeTab === 'bumbu' ? 'Konsumsi Bumbu' : 
+                             activeTab === 'beras' ? 'Monitoring Beras' : 
+                             activeTab === 'rte' ? 'RTE (Siap Saji)' : 
+                             activeTab === 'tenant' ? 'Tenant Hotel' : 
+                             activeTab === 'ekspedisi' ? 'Ekspedisi' : 'Telekomunikasi'}
+                        </span>
+                        <span className="px-3 py-1 rounded-lg bg-[#D4AF37] text-[#064E3B] text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20 flex items-center gap-1.5">
+                            <Calendar size={10} />
+                            {selectedItem.date}
+                        </span>
+                    </div>
+                    <h2 className="text-3xl font-bold text-white leading-tight line-clamp-2 drop-shadow-sm">
+                        {selectedItem.name || selectedItem.companyName || selectedItem.shopName || selectedItem.providerName}
+                    </h2>
+                </div>
+            </div>
+
+            {/* Content - Scrollable */}
+            <div className="p-8 overflow-y-auto custom-scrollbar bg-gray-50/30">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {activeTab === 'bumbu' && (
+                        <>
+                            <DetailRow label="Perusahaan" value={selectedItem.companyName} icon={Building2} />
+                            <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} />
+                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
+                            <DetailRow label="PIC Dapur" value={selectedItem.pic} icon={User} />
+                            <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Package} />
+                            <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} />
+                            <DetailRow label="Bahan Lain" value={selectedItem.otherIngredients} icon={FileText} />
+                            <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} />
+                        </>
+                    )}
+                    {activeTab === 'beras' && (
+                        <>
+                            <DetailRow label="Jenis Beras" value={selectedItem.riceType} icon={Package} />
+                            <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Database} />
+                            <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} />
+                            <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} />
+                            <DetailRow label="Harga Asal" value={`Rp ${selectedItem.productPrice}`} icon={DollarSign} />
+                            <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} />
+                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
+                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
+                        </>
+                    )}
+                    {activeTab === 'rte' && (
+                        <>
+                            <DetailRow label="Menu" value={selectedItem.menu} icon={UtensilsCrossed} />
+                            <DetailRow label="Volume" value={`${selectedItem.volume} Porsi`} icon={Package} />
+                            <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} />
+                            <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} />
+                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
+                            <DetailRow label="Hotel" value={`${selectedItem.hotelName} (${selectedItem.hotelNumber || '-'})`} icon={Building} />
+                            <DetailRow label="Kloter" value={selectedItem.kloterName} icon={User} />
+                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
+                        </>
+                    )}
+                    {activeTab === 'tenant' && (
+                        <>
+                            <DetailRow label="Produk Utama" value={selectedItem.productType} icon={ShoppingBag} />
+                            <DetailRow label="Produk Terlaris" value={selectedItem.bestSeller} icon={TrendingUp} />
+                            <DetailRow label="Biaya Sewa" value={`SAR ${selectedItem.rentCost}`} icon={DollarSign} />
+                            <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} />
+                            <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} />
+                            <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} />
+                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
+                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
+                        </>
+                    )}
+                    {activeTab === 'ekspedisi' && (
+                        <>
+                            <DetailRow label="Berat Total" value={`${selectedItem.weight} Kg`} icon={Scale} />
+                            <DetailRow label="Harga / Kg" value={`SAR ${selectedItem.pricePerKg}`} icon={DollarSign} />
+                            <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} />
+                            <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} />
+                            <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} />
+                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
+                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
+                        </>
+                    )}
+                    {activeTab === 'telco' && (
+                        <>
+                            <DetailRow label="Nama Jemaah" value={selectedItem.respondentName} icon={User} />
+                            <DetailRow label="Kloter" value={selectedItem.kloter} icon={User} />
+                            <DetailRow label="Embarkasi" value={selectedItem.embarkation} icon={MapPin} />
+                            <DetailRow label="Provinsi" value={selectedItem.province} icon={MapPin} />
+                            <DetailRow label="Paket Roaming" value={selectedItem.roamingPackage} icon={Signal} />
+                            <DetailRow label="Status" value={selectedItem.roamingPackage ? 'Terisi' : 'Kosong'} icon={CheckCircle2} />
+                        </>
+                    )}
+                </div>
+                
+                {/* Footer / Surveyor Info */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                    <div className="flex items-center justify-between bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#064E3B] to-[#043025] flex items-center justify-center text-[#D4AF37] shadow-lg shadow-[#064E3B]/20">
+                                <User size={24} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Disurvei Oleh</p>
+                                <p className="text-base font-bold text-gray-800">{selectedItem.surveyor || '-'}</p>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Waktu Survei</p>
+                            <div className="flex items-center justify-end gap-2 text-base font-bold text-[#064E3B]">
+                                <div className="p-1.5 bg-[#D4AF37]/10 rounded-lg">
+                                    <Clock size={16} className="text-[#D4AF37]" />
+                                </div>
+                                {selectedItem.time || '-'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-8 animate-fade-in-up pb-10">
         
@@ -709,6 +876,9 @@ export const Reports: React.FC = () => {
                 </div>
             </div>
         </GlassCard>
+
+        {/* Render Detail Modal */}
+        <DetailModal />
     </div>
   );
 };
