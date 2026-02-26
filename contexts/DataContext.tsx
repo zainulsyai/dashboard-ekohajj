@@ -82,23 +82,26 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [riceData, setRiceData] = useState<RiceRecord[]>([]);
   const [telecomActive, setTelecomActive] = useState<Record<number, boolean>>({});
 
-  useEffect(() => {
+    useEffect(() => {
     const timer = setTimeout(() => {
+        const surveyors = ['Zainul Syaifudin', 'Ahmad Ulin Nuha'];
+        const getRandomSurveyor = () => surveyors[Math.floor(Math.random() * surveyors.length)];
+
         // 1. Initialize Bumbu (Active records for first 5 items)
         const mapBumbu = (list: typeof bumbuSource, location: string) => list.map((item, idx) => ({
             id: idx + 1,
             name: item.name,
-            companyName: item.company || `Supplier ${location} ${idx + 1}`, 
-            isUsed: idx < 6, // First 6 are used
-            volume: idx < 6 ? (Math.random() * 5 + 1).toFixed(2) : '',
-            price: idx < 6 ? (Math.random() * 5000 + 15000).toFixed(0) : '',
-            otherIngredients: idx === 0 ? 'Daun Salam, Serai' : '',
-            originProduct: idx < 6 ? 'Indonesia' : '',
-            productPrice: idx < 6 ? (Math.random() * 4000 + 12000).toFixed(0) : '',
+            companyName: item.company || (idx % 2 === 0 ? 'CV. Sumber Rasa Nusantara' : 'PT. Bumbu Dapur Ibu'), 
+            isUsed: idx < 8, // First 8 are used
+            volume: idx < 8 ? (Math.random() * 10 + 5).toFixed(2) : '',
+            price: idx < 8 ? (Math.random() * 5000 + 15000).toFixed(0) : '',
+            otherIngredients: idx === 0 ? 'Daun Salam, Serai, Lengkuas' : (idx === 3 ? 'Kecap Manis, Bawang Goreng' : ''),
+            originProduct: idx < 8 ? 'Indonesia' : '',
+            productPrice: idx < 8 ? (Math.random() * 4000 + 12000).toFixed(0) : '',
             kitchenName: `Dapur ${location} Sektor ${idx % 5 + 1}`,
-            address: `Jalan ${location} No. ${idx + 10}`,
-            pic: 'Abdullah',
-            surveyor: 'Fulan bin Fulan',
+            address: location === 'Makkah' ? `Jalan Al Hujun No. ${idx + 10}, Makkah` : `Jalan King Fahd No. ${idx + 20}, Madinah`,
+            pic: idx % 2 === 0 ? 'Abdullah Al-Indunisi' : 'Siti Aminah',
+            surveyor: getRandomSurveyor(),
             date: '20/06/2026',
             time: '08:30'
         }));
@@ -110,16 +113,16 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
              id: idx + 1, 
              companyName: item.company, 
              menu: item.menu, 
-             isUsed: idx < 4, 
-             volume: idx < 4 ? (Math.floor(Math.random() * 2000) + 1000).toString() : '', 
-             price: idx < 4 ? (Math.floor(Math.random() * 5) + 12).toString() : '',
-             kitchenName: `Dapur Katering ${idx + 1}`,
-             address: 'Makkah Al Mukarramah',
+             isUsed: idx < 6, 
+             volume: idx < 6 ? (Math.floor(Math.random() * 2000) + 1000).toString() : '', 
+             price: idx < 6 ? (Math.floor(Math.random() * 5) + 12).toString() : '',
+             kitchenName: `Dapur Katering Al-Barokah ${idx + 1}`,
+             address: 'Makkah Al Mukarramah, Sektor Syisah',
              hotelName: `Hotel Al Kiswah Tower ${idx + 1}`,
              hotelNumber: `90${idx}`,
              kloterName: `JKG-${idx + 10}`,
              pic: 'Muhammad Ali',
-             surveyor: 'Ahmad S.',
+             surveyor: getRandomSurveyor(),
              date: '21/06/2026',
              time: '11:00'
         }));
@@ -131,14 +134,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 id: 1, 
                 shopName: 'Toko Indonesia Barokah', 
                 productType: 'Makanan & Minuman Indonesia', 
-                bestSeller: 'Indomie, Saus Sambal', 
+                bestSeller: 'Indomie, Saus Sambal, Kecap Bango', 
                 rentCost: '15000',
                 hotelName: 'Al Kiswah Towers',
                 address: 'Jarwal, Makkah',
                 sector: '1',
                 location: 'Lantai Dasar',
                 pic: 'H. Slamet',
-                surveyor: 'Budi Santoso',
+                surveyor: 'Zainul Syaifudin',
                 date: '22/06/2026',
                 time: '09:00'
             },
@@ -146,14 +149,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 id: 2, 
                 shopName: 'Bin Dawood Souvenir', 
                 productType: 'Oleh-oleh Haji', 
-                bestSeller: 'Sajadah, Kurma Ajwa', 
+                bestSeller: 'Sajadah, Kurma Ajwa, Air Zamzam', 
                 rentCost: '25000',
                 hotelName: 'Makkah Clock Tower',
                 address: 'Ajyad, Makkah',
                 sector: '3',
                 location: 'Lantai 1',
-                pic: 'Ahmed',
-                surveyor: 'Budi Santoso',
+                pic: 'Ahmed Al-Ghamdi',
+                surveyor: 'Ahmad Ulin Nuha',
                 date: '22/06/2026',
                 time: '10:30'
             },
@@ -161,16 +164,31 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 id: 3, 
                 shopName: 'Bakso Mang Oedin', 
                 productType: 'Makanan Siap Saji', 
-                bestSeller: 'Bakso Urat', 
+                bestSeller: 'Bakso Urat, Es Teh Manis', 
                 rentCost: '18000',
                 hotelName: 'Sofwah Tower',
                 address: 'Ajyad, Makkah',
                 sector: '3',
                 location: 'Food Court',
-                pic: 'Udin',
-                surveyor: 'Budi Santoso',
+                pic: 'Udin Saefudin',
+                surveyor: 'Zainul Syaifudin',
                 date: '22/06/2026',
                 time: '12:00'
+            },
+            { 
+                id: 4, 
+                shopName: 'Al-Madinah Dates', 
+                productType: 'Kurma & Kacang Arab', 
+                bestSeller: 'Kurma Sukari, Kacang Pistachio', 
+                rentCost: '20000',
+                hotelName: 'Rawda Al Aseel',
+                address: 'Syisah, Makkah',
+                sector: '4',
+                location: 'Lobby Area',
+                pic: 'Faisal',
+                surveyor: 'Ahmad Ulin Nuha',
+                date: '22/06/2026',
+                time: '14:00'
             }
         ]);
 
@@ -182,11 +200,11 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 pricePerKg: '12', 
                 weight: '2500',
                 hotelName: 'Kiswah Tower 1',
-                address: 'Jarwal',
+                address: 'Jarwal, Makkah',
                 sector: '1',
                 location: 'Lobby Utama',
-                pic: 'Rudi',
-                surveyor: 'Joko',
+                pic: 'Rudi Hartono',
+                surveyor: 'Zainul Syaifudin',
                 date: '23/06/2026',
                 time: '14:00'
             },
@@ -196,11 +214,11 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 pricePerKg: '15', 
                 weight: '1200',
                 hotelName: 'Arkan Bakkah',
-                address: 'Mahbas Jin',
+                address: 'Mahbas Jin, Makkah',
                 sector: '2',
                 location: 'Area Parkir',
-                pic: 'Siti',
-                surveyor: 'Joko',
+                pic: 'Siti Nurhaliza',
+                surveyor: 'Ahmad Ulin Nuha',
                 date: '23/06/2026',
                 time: '15:30'
             },
@@ -210,13 +228,27 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 pricePerKg: '13',
                 weight: '800',
                 hotelName: 'Rawda Al Aseel',
-                address: 'Syisah',
+                address: 'Syisah, Makkah',
                 sector: '4',
                 location: 'Lantai M',
-                pic: 'Bambang',
-                surveyor: 'Joko',
+                pic: 'Bambang Pamungkas',
+                surveyor: 'Zainul Syaifudin',
                 date: '23/06/2026',
                 time: '16:45'
+            },
+            {
+                id: 4,
+                companyName: 'JNE Express Haji',
+                pricePerKg: '14',
+                weight: '1500',
+                hotelName: 'Grand Zamzam',
+                address: 'Ajyad, Makkah',
+                sector: '3',
+                location: 'Pintu Masuk Belakang',
+                pic: 'Agus Salim',
+                surveyor: 'Ahmad Ulin Nuha',
+                date: '23/06/2026',
+                time: '17:30'
             }
         ]);
 
@@ -232,10 +264,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 otherRice: '-', 
                 originProduct: 'Indonesia', 
                 productPrice: '12000',
-                kitchenName: 'Dapur Sektor 1',
-                address: 'Makkah',
-                pic: 'Kepala Dapur',
-                surveyor: 'Admin',
+                kitchenName: 'Dapur Sektor 1 - Jarwal',
+                address: 'Jarwal, Makkah',
+                pic: 'H. Maman',
+                surveyor: 'Zainul Syaifudin',
                 date: '19/06/2026',
                 time: '07:00'
             },
@@ -249,22 +281,39 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 otherRice: '-', 
                 originProduct: 'Arab Saudi', 
                 productPrice: '4000',
-                kitchenName: 'Dapur Sektor 2',
-                address: 'Madinah',
-                pic: 'Syekh Ali',
-                surveyor: 'Admin',
+                kitchenName: 'Dapur Sektor 2 - Mahbas Jin',
+                address: 'Mahbas Jin, Makkah',
+                pic: 'Syekh Ali Jaber',
+                surveyor: 'Ahmad Ulin Nuha',
                 date: '19/06/2026',
                 time: '08:00'
             },
             {
                 id: 3,
-                companyName: 'PT. Padi Unggul',
+                companyName: 'PT. Padi Unggul Nusantara',
                 riceType: 'Beras Pandan Wangi',
+                isUsed: true,
+                volume: '100',
+                price: '3800',
+                otherRice: '-',
+                originProduct: 'Indonesia',
+                productPrice: '13500',
+                kitchenName: 'Dapur Sektor 3 - Misfalah',
+                address: 'Misfalah, Makkah',
+                pic: 'Ibu Yati',
+                surveyor: 'Zainul Syaifudin',
+                date: '19/06/2026',
+                time: '09:30'
+            },
+            {
+                id: 4,
+                companyName: 'Thai Rice Export',
+                riceType: 'Beras Melati (Jasmine)',
                 isUsed: false,
                 volume: '',
                 price: '',
                 otherRice: '',
-                originProduct: 'Indonesia',
+                originProduct: 'Thailand',
                 productPrice: '',
                 kitchenName: '',
                 address: '',
@@ -285,7 +334,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 kloter: 'SUB-45',
                 embarkation: 'Surabaya',
                 province: 'Jawa Timur',
-                surveyor: 'Rina',
+                surveyor: 'Zainul Syaifudin',
                 date: '24/06/2026'
             },
             {
@@ -296,29 +345,51 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 kloter: 'JKG-12',
                 embarkation: 'Jakarta',
                 province: 'DKI Jakarta',
-                surveyor: 'Rina',
+                surveyor: 'Ahmad Ulin Nuha',
                 date: '24/06/2026'
             },
             {
                 id: 3, 
                 providerName: 'STC (Saudi Telecom)', 
                 roamingPackage: 'Sawa Ziyara',
-                respondentName: 'H. Budi',
+                respondentName: 'H. Budi Santoso',
                 kloter: 'SOC-20',
                 embarkation: 'Solo',
                 province: 'Jawa Tengah',
-                surveyor: 'Rina',
+                surveyor: 'Zainul Syaifudin',
                 date: '24/06/2026'
             },
             {
                 id: 4, 
                 providerName: 'Mobily', 
                 roamingPackage: 'Hajj & Umrah Package',
-                respondentName: 'Hj. Dewi',
+                respondentName: 'Hj. Dewi Sartika',
                 kloter: 'MES-05',
                 embarkation: 'Medan',
                 province: 'Sumatera Utara',
-                surveyor: 'Rina',
+                surveyor: 'Ahmad Ulin Nuha',
+                date: '24/06/2026'
+            },
+            {
+                id: 5, 
+                providerName: 'XL Axiata', 
+                roamingPackage: 'XL Pass Haji',
+                respondentName: 'H. Ridwan Kamil',
+                kloter: 'JKS-01',
+                embarkation: 'Bekasi',
+                province: 'Jawa Barat',
+                surveyor: 'Zainul Syaifudin',
+                date: '24/06/2026'
+            },
+            {
+                id: 6, 
+                providerName: 'Zain KSA', 
+                roamingPackage: 'Zain Hajj Data',
+                respondentName: 'Hj. Ratna Sari',
+                kloter: 'UPG-10',
+                embarkation: 'Makassar',
+                province: 'Sulawesi Selatan',
+                surveyor: 'Ahmad Ulin Nuha',
                 date: '24/06/2026'
             }
         ]);
