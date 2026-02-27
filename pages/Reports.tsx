@@ -577,7 +577,19 @@ export const Reports: React.FC = () => {
   const DetailModal = () => {
     if (!selectedItem) return null;
 
-    const DetailRow = ({ label, value, icon: Icon, delay }: any) => (
+    // Generate dummy extra details for visual richness
+    const surveyId = `SRV-2026-${selectedItem.id.toString().padStart(4, '0')}`;
+    // Status logic: Even IDs are Verified (Sent), Odd IDs are Draft (Not Sent)
+    const status = selectedItem.id % 2 === 0 ? 'Verified' : 'Draft';
+    const statusColor = status === 'Verified' ? 'bg-emerald-500' : 'bg-gray-400';
+    const statusTextColor = status === 'Verified' ? 'text-emerald-100/80' : 'text-gray-300/80';
+    const coordinates = `${(21.3891 + Math.random() * 0.1).toFixed(6)}, ${(39.8579 + Math.random() * 0.1).toFixed(6)}`;
+    const picContact = `+966 5${Math.floor(Math.random() * 90000000 + 10000000)}`;
+    const notes = status === 'Verified' 
+        ? "Laporan telah dikirim dan diverifikasi. Kondisi penyimpanan baik, suhu ruangan terkontrol. Stok mencukupi."
+        : "Laporan masih dalam bentuk draf. Menunggu kelengkapan data foto dan tanda tangan digital PIC sebelum dikirim.";
+
+    const DetailRow = ({ label, value, icon: Icon, delay, subValue }: any) => (
       <div 
         className="group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(6,78,59,0.08)] hover:border-[#064E3B]/20 transition-all duration-300 hover:-translate-y-0.5 animate-fade-in-up fill-mode-forwards opacity-0"
         style={{ animationDelay: `${delay}ms` }}
@@ -588,6 +600,7 @@ export const Reports: React.FC = () => {
         <div className="min-w-0 flex-1 pt-0.5">
           <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 group-hover:text-[#064E3B]/70 transition-colors">{label}</p>
           <p className="text-sm font-bold text-gray-800 break-words leading-snug line-clamp-2">{value || '-'}</p>
+          {subValue && <p className="text-[10px] text-gray-500 mt-0.5 font-medium">{subValue}</p>}
         </div>
       </div>
     );
@@ -609,30 +622,48 @@ export const Reports: React.FC = () => {
 
                 {/* Top Content */}
                 <div className="relative z-10 space-y-6">
-                    <div className="flex flex-wrap gap-2">
-                        <span className="px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit">
-                            {activeTab === 'bumbu' && <ChefHat size={12} className="text-[#D4AF37]" />}
-                            {activeTab === 'beras' && <ShoppingCart size={12} className="text-[#D4AF37]" />}
-                            {activeTab === 'rte' && <UtensilsCrossed size={12} className="text-[#D4AF37]" />}
-                            {activeTab === 'tenant' && <Store size={12} className="text-[#D4AF37]" />}
-                            {activeTab === 'ekspedisi' && <Truck size={12} className="text-[#D4AF37]" />}
-                            {activeTab === 'telco' && <Signal size={12} className="text-[#D4AF37]" />}
-                            
-                            {activeTab === 'bumbu' ? 'Konsumsi Bumbu' : 
-                             activeTab === 'beras' ? 'Monitoring Beras' : 
-                             activeTab === 'rte' ? 'RTE (Siap Saji)' : 
-                             activeTab === 'tenant' ? 'Tenant Hotel' : 
-                             activeTab === 'ekspedisi' ? 'Ekspedisi' : 'Telekomunikasi'}
-                        </span>
-                        <span className="px-3 py-1.5 rounded-lg bg-[#D4AF37] text-[#064E3B] text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20 flex items-center gap-1.5 w-fit">
-                            <Calendar size={12} />
-                            {selectedItem.date}
+                    <div className="flex flex-wrap gap-2 items-center justify-between w-full">
+                        <div className="flex gap-2">
+                            <span className="px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit">
+                                {activeTab === 'bumbu' && <ChefHat size={12} className="text-[#D4AF37]" />}
+                                {activeTab === 'beras' && <ShoppingCart size={12} className="text-[#D4AF37]" />}
+                                {activeTab === 'rte' && <UtensilsCrossed size={12} className="text-[#D4AF37]" />}
+                                {activeTab === 'tenant' && <Store size={12} className="text-[#D4AF37]" />}
+                                {activeTab === 'ekspedisi' && <Truck size={12} className="text-[#D4AF37]" />}
+                                {activeTab === 'telco' && <Signal size={12} className="text-[#D4AF37]" />}
+                                
+                                {activeTab === 'bumbu' ? 'Konsumsi Bumbu' : 
+                                activeTab === 'beras' ? 'Monitoring Beras' : 
+                                activeTab === 'rte' ? 'RTE (Siap Saji)' : 
+                                activeTab === 'tenant' ? 'Tenant Hotel' : 
+                                activeTab === 'ekspedisi' ? 'Ekspedisi' : 'Telekomunikasi'}
+                            </span>
+                        </div>
+                        <span className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[9px] font-mono text-emerald-200/80 tracking-widest">
+                            {surveyId}
                         </span>
                     </div>
 
-                    <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight">
-                        {selectedItem.name || selectedItem.companyName || selectedItem.shopName || selectedItem.providerName}
-                    </h2>
+                    <div>
+                        <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight mb-2">
+                            {selectedItem.name || selectedItem.companyName || selectedItem.shopName || selectedItem.providerName}
+                        </h2>
+                        <div className="flex items-center gap-2">
+                             <span className={`h-2 w-2 rounded-full ${statusColor} shadow-[0_0_8px_rgba(255,255,255,0.5)] animate-pulse`}></span>
+                             <span className={`text-xs font-medium ${statusTextColor} tracking-wide uppercase`}>{status}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2 mt-4">
+                         <span className="px-3 py-1.5 rounded-lg bg-[#D4AF37] text-[#064E3B] text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20 flex items-center gap-1.5 w-fit">
+                            <Calendar size={12} />
+                            {selectedItem.date}
+                        </span>
+                        <span className="px-3 py-1.5 rounded-lg bg-[#064E3B]/40 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit">
+                            <Clock size={12} />
+                            {selectedItem.time}
+                        </span>
+                    </div>
                 </div>
 
                 {/* Bottom Content: Surveyor */}
@@ -645,8 +676,8 @@ export const Reports: React.FC = () => {
                             <p className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider mb-0.5">Disurvei Oleh</p>
                             <p className="text-base font-bold text-white">{selectedItem.surveyor || '-'}</p>
                             <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-100/80 mt-0.5">
-                                <Clock size={12} />
-                                {selectedItem.time || '-'}
+                                <CheckCircle2 size={12} />
+                                Certified Surveyor
                             </div>
                         </div>
                     </div>
@@ -669,13 +700,13 @@ export const Reports: React.FC = () => {
                         Detail Data
                     </h3>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         {activeTab === 'bumbu' && (
                             <>
                                 <DetailRow label="Perusahaan" value={selectedItem.companyName} icon={Building2} delay={100} />
-                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={150} />
+                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={150} subValue={`GPS: ${coordinates}`} />
                                 <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={200} />
-                                <DetailRow label="PIC Dapur" value={selectedItem.pic} icon={User} delay={250} />
+                                <DetailRow label="PIC Dapur" value={selectedItem.pic} icon={User} delay={250} subValue={picContact} />
                                 <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Package} delay={300} />
                                 <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={350} />
                                 <DetailRow label="Bahan Lain" value={selectedItem.otherIngredients} icon={FileText} delay={400} />
@@ -689,9 +720,9 @@ export const Reports: React.FC = () => {
                                 <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
                                 <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} delay={250} />
                                 <DetailRow label="Harga Asal" value={`Rp ${selectedItem.productPrice}`} icon={DollarSign} delay={300} />
-                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={350} />
+                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={350} subValue={`GPS: ${coordinates}`} />
                                 <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={400} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'rte' && (
@@ -699,11 +730,11 @@ export const Reports: React.FC = () => {
                                 <DetailRow label="Menu" value={selectedItem.menu} icon={UtensilsCrossed} delay={100} />
                                 <DetailRow label="Volume" value={`${selectedItem.volume} Porsi`} icon={Package} delay={150} />
                                 <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
-                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={250} />
+                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={250} subValue={`GPS: ${coordinates}`} />
                                 <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={300} />
                                 <DetailRow label="Hotel" value={`${selectedItem.hotelName} (${selectedItem.hotelNumber || '-'})`} icon={Building} delay={350} />
                                 <DetailRow label="Kloter" value={selectedItem.kloterName} icon={User} delay={400} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'tenant' && (
@@ -712,10 +743,10 @@ export const Reports: React.FC = () => {
                                 <DetailRow label="Produk Terlaris" value={selectedItem.bestSeller} icon={TrendingUp} delay={150} />
                                 <DetailRow label="Biaya Sewa" value={`SAR ${selectedItem.rentCost}`} icon={DollarSign} delay={200} />
                                 <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} delay={250} />
-                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={300} />
+                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={300} subValue={`GPS: ${coordinates}`} />
                                 <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} delay={350} />
                                 <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={400} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'ekspedisi' && (
@@ -723,10 +754,10 @@ export const Reports: React.FC = () => {
                                 <DetailRow label="Berat Total" value={`${selectedItem.weight} Kg`} icon={Scale} delay={100} />
                                 <DetailRow label="Harga / Kg" value={`SAR ${selectedItem.pricePerKg}`} icon={DollarSign} delay={150} />
                                 <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} delay={200} />
-                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={250} />
+                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={250} subValue={`GPS: ${coordinates}`} />
                                 <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} delay={300} />
                                 <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={350} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={400} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={400} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'telco' && (
@@ -739,6 +770,17 @@ export const Reports: React.FC = () => {
                                 <DetailRow label="Status" value={selectedItem.roamingPackage ? 'Terisi' : 'Kosong'} icon={CheckCircle2} delay={350} />
                             </>
                         )}
+                    </div>
+
+                    {/* Surveyor Notes Section */}
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 animate-fade-in-up" style={{ animationDelay: '500ms', animationFillMode: 'forwards', opacity: 0 }}>
+                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <FileText size={12} />
+                            Catatan Surveyor
+                        </h4>
+                        <p className="text-xs text-gray-600 leading-relaxed italic">
+                            "{notes}"
+                        </p>
                     </div>
                 </div>
             </div>
