@@ -1,8 +1,9 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { ChefHat, UtensilsCrossed, Truck, Store, Signal, Download, Printer, Filter, Search, MapPin, User, Calendar, Clock, Building, ShoppingCart, ChevronDown, Check, ArrowDownUp, Database, X, Building2, Package, DollarSign, FileText, Globe, ShoppingBag, TrendingUp, Scale, CheckCircle2 } from 'lucide-react';
+import { ChefHat, UtensilsCrossed, Truck, Store, Signal, Download, Printer, Filter, Search, MapPin, User, Calendar, Clock, Building, ShoppingCart, ChevronDown, Check, ArrowDownUp, Database, X, Building2, Package, DollarSign, FileText, Globe, ShoppingBag, TrendingUp, Scale, CheckCircle2, Edit, Save } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
+import { useUser } from '../contexts/UserContext';
 import { TableRowSkeleton } from '../components/Skeletons';
 import { HeroSection } from '../components/HeroSection';
 
@@ -575,7 +576,48 @@ export const Reports: React.FC = () => {
 
   // Detail Modal Component
   const DetailModal = () => {
+    const { user } = useUser();
+    const [isEditing, setIsEditing] = useState(false);
+    const [editForm, setEditForm] = useState<any>({});
+    const { 
+        setBumbuMakkah, setBumbuMadinah, setRteData, setTenantData, setExpeditionData, setTelecomData, setRiceData 
+    } = useData();
+
+    useEffect(() => {
+        if (selectedItem) {
+            setEditForm({ ...selectedItem });
+            setIsEditing(false);
+        }
+    }, [selectedItem]);
+
     if (!selectedItem) return null;
+
+    // Permission Check: Only Surveyor or Admin can edit
+    const canEdit = user.role === 'ADMINISTRATOR' || user.name === selectedItem.surveyor;
+
+    const handleSave = () => {
+        // Update local state (simulating API call)
+        const updateData = (setter: any) => {
+            setter((prev: any[]) => prev.map(item => item.id === editForm.id ? { ...item, ...editForm } : item));
+        };
+
+        switch (activeTab) {
+            case 'bumbu':
+                if (editForm.loc === 'Makkah') updateData(setBumbuMakkah);
+                else updateData(setBumbuMadinah);
+                break;
+            case 'beras': updateData(setRiceData); break;
+            case 'rte': updateData(setRteData); break;
+            case 'tenant': updateData(setTenantData); break;
+            case 'ekspedisi': updateData(setExpeditionData); break;
+            case 'telco': updateData(setTelecomData); break;
+        }
+
+        setSelectedItem({ ...editForm });
+        setIsEditing(false);
+        // Ideally show a toast here
+        alert('Data berhasil disimpan!');
+    };
 
     // Generate dummy extra details for visual richness
     const surveyId = `SRV-2026-${selectedItem.id.toString().padStart(4, '0')}`;
@@ -589,18 +631,29 @@ export const Reports: React.FC = () => {
         ? "Laporan telah dikirim dan diverifikasi. Kondisi penyimpanan baik, suhu ruangan terkontrol. Stok mencukupi."
         : "Laporan masih dalam bentuk draf. Menunggu kelengkapan data foto dan tanda tangan digital PIC sebelum dikirim.";
 
-    const DetailRow = ({ label, value, icon: Icon, delay, subValue }: any) => (
+    const DetailRow = ({ label, field, value, icon: Icon, delay, subValue }: any) => (
       <div 
-        className="group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(6,78,59,0.08)] hover:border-[#064E3B]/20 transition-all duration-300 hover:-translate-y-0.5 animate-fade-in-up fill-mode-forwards opacity-0"
+        className={`group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(6,78,59,0.08)] hover:border-[#064E3B]/20 transition-all duration-300 hover:-translate-y-0.5 animate-fade-in-up fill-mode-forwards opacity-0 ${isEditing ? 'ring-2 ring-[#D4AF37]/20' : ''}`}
         style={{ animationDelay: `${delay}ms` }}
       >
         <div className="p-2.5 bg-gradient-to-br from-[#064E3B]/5 to-[#064E3B]/10 rounded-lg text-[#064E3B] shrink-0 group-hover:from-[#064E3B] group-hover:to-[#043025] group-hover:text-[#D4AF37] transition-all duration-300 shadow-inner">
           <Icon size={18} strokeWidth={1.5} />
         </div>
-        <div className="min-w-0 flex-1 pt-0.5">
+        <div className="min-w-0 flex-1 pt-0.5 w-full">
           <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 group-hover:text-[#064E3B]/70 transition-colors">{label}</p>
-          <p className="text-sm font-bold text-gray-800 break-words leading-snug line-clamp-2">{value || '-'}</p>
-          {subValue && <p className="text-[10px] text-gray-500 mt-0.5 font-medium">{subValue}</p>}
+          
+          {isEditing && field ? (
+              <input 
+                type="text" 
+                value={editForm[field] || ''} 
+                onChange={(e) => setEditForm({ ...editForm, [field]: e.target.value })}
+                className="w-full text-sm font-bold text-gray-800 border-b border-gray-300 focus:border-[#064E3B] outline-none bg-transparent py-0.5 transition-colors"
+              />
+          ) : (
+              <p className="text-sm font-bold text-gray-800 break-words leading-snug line-clamp-2">{value || '-'}</p>
+          )}
+          
+          {subValue && !isEditing && <p className="text-[10px] text-gray-500 mt-0.5 font-medium">{subValue}</p>}
         </div>
       </div>
     );
@@ -609,7 +662,7 @@ export const Reports: React.FC = () => {
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
         <div 
             className="absolute inset-0 bg-[#000000]/70 backdrop-blur-md transition-opacity duration-300 animate-fade-in" 
-            onClick={() => setSelectedItem(null)}
+            onClick={() => !isEditing && setSelectedItem(null)}
         />
         <div className="relative w-full max-w-5xl bg-[#F8F9FA] rounded-[2rem] shadow-2xl ring-1 ring-white/20 overflow-hidden animate-zoom-in flex flex-col md:flex-row max-h-[90vh] md:h-auto border border-white/40">
             
@@ -645,9 +698,22 @@ export const Reports: React.FC = () => {
                     </div>
 
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight mb-2">
-                            {selectedItem.name || selectedItem.companyName || selectedItem.shopName || selectedItem.providerName}
-                        </h2>
+                        {isEditing ? (
+                             <input 
+                                type="text" 
+                                value={editForm.name || editForm.companyName || editForm.shopName || editForm.providerName || ''}
+                                onChange={(e) => {
+                                    const field = activeTab === 'tenant' ? 'shopName' : activeTab === 'telco' ? 'providerName' : activeTab === 'bumbu' ? 'name' : 'companyName';
+                                    setEditForm({ ...editForm, [field]: e.target.value });
+                                }}
+                                className="text-3xl md:text-4xl font-bold text-white bg-transparent border-b border-white/20 focus:border-[#D4AF37] outline-none w-full mb-2"
+                             />
+                        ) : (
+                            <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight mb-2">
+                                {selectedItem.name || selectedItem.companyName || selectedItem.shopName || selectedItem.providerName}
+                            </h2>
+                        )}
+                        
                         <div className="flex items-center gap-2">
                              <span className={`h-2 w-2 rounded-full ${statusColor} shadow-[0_0_8px_rgba(255,255,255,0.5)] animate-pulse`}></span>
                              <span className={`text-xs font-medium ${statusTextColor} tracking-wide uppercase`}>{status}</span>
@@ -687,12 +753,45 @@ export const Reports: React.FC = () => {
             {/* RIGHT SIDE: Details Grid */}
             <div className="w-full md:w-[60%] bg-[#F8F9FA] p-8 relative flex flex-col">
                 {/* Close Button */}
-                <button 
-                    onClick={() => setSelectedItem(null)}
-                    className="absolute top-6 right-6 p-2 bg-white hover:bg-gray-50 text-gray-400 hover:text-red-500 rounded-full transition-all duration-300 z-20 border border-gray-200 hover:border-red-200 hover:rotate-90 shadow-sm"
-                >
-                    <X size={20} />
-                </button>
+                {!isEditing && (
+                    <button 
+                        onClick={() => setSelectedItem(null)}
+                        className="absolute top-6 right-6 p-2 bg-white hover:bg-gray-50 text-gray-400 hover:text-red-500 rounded-full transition-all duration-300 z-20 border border-gray-200 hover:border-red-200 hover:rotate-90 shadow-sm"
+                    >
+                        <X size={20} />
+                    </button>
+                )}
+
+                {/* Edit Actions */}
+                {canEdit && (
+                    <div className="absolute top-6 right-16 z-20 flex gap-2">
+                        {isEditing ? (
+                            <>
+                                <button 
+                                    onClick={() => setIsEditing(false)}
+                                    className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-50 transition-all shadow-sm"
+                                >
+                                    Batal
+                                </button>
+                                <button 
+                                    onClick={handleSave}
+                                    className="px-4 py-2 bg-[#064E3B] text-white rounded-xl text-xs font-bold hover:bg-[#053D2E] transition-all shadow-lg shadow-[#064E3B]/20 flex items-center gap-2"
+                                >
+                                    <Save size={14} />
+                                    Simpan
+                                </button>
+                            </>
+                        ) : (
+                            <button 
+                                onClick={() => setIsEditing(true)}
+                                className="p-2 bg-white hover:bg-[#064E3B] text-gray-400 hover:text-white rounded-full transition-all duration-300 border border-gray-200 hover:border-[#064E3B] shadow-sm group"
+                                title="Edit Laporan"
+                            >
+                                <Edit size={18} className="group-hover:scale-90 transition-transform" />
+                            </button>
+                        )}
+                    </div>
+                )}
 
                 <div className="flex-1 flex flex-col justify-center">
                     <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -703,71 +802,71 @@ export const Reports: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         {activeTab === 'bumbu' && (
                             <>
-                                <DetailRow label="Perusahaan" value={selectedItem.companyName} icon={Building2} delay={100} />
-                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={150} subValue={`GPS: ${coordinates}`} />
-                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={200} />
-                                <DetailRow label="PIC Dapur" value={selectedItem.pic} icon={User} delay={250} subValue={picContact} />
-                                <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Package} delay={300} />
-                                <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={350} />
-                                <DetailRow label="Bahan Lain" value={selectedItem.otherIngredients} icon={FileText} delay={400} />
-                                <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} delay={450} />
+                                <DetailRow label="Perusahaan" field="companyName" value={selectedItem.companyName} icon={Building2} delay={100} />
+                                <DetailRow label="Lokasi Dapur" field="kitchenName" value={selectedItem.kitchenName} icon={ChefHat} delay={150} subValue={`GPS: ${coordinates}`} />
+                                <DetailRow label="Alamat" field="address" value={selectedItem.address} icon={MapPin} delay={200} />
+                                <DetailRow label="PIC Dapur" field="pic" value={selectedItem.pic} icon={User} delay={250} subValue={picContact} />
+                                <DetailRow label="Volume" field="volume" value={`${selectedItem.volume} Ton`} icon={Package} delay={300} />
+                                <DetailRow label="Harga" field="price" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={350} />
+                                <DetailRow label="Bahan Lain" field="otherIngredients" value={selectedItem.otherIngredients} icon={FileText} delay={400} />
+                                <DetailRow label="Asal Produk" field="originProduct" value={selectedItem.originProduct} icon={Globe} delay={450} />
                             </>
                         )}
                         {activeTab === 'beras' && (
                             <>
-                                <DetailRow label="Jenis Beras" value={selectedItem.riceType} icon={Package} delay={100} />
-                                <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Database} delay={150} />
-                                <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
-                                <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} delay={250} />
-                                <DetailRow label="Harga Asal" value={`Rp ${selectedItem.productPrice}`} icon={DollarSign} delay={300} />
-                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={350} subValue={`GPS: ${coordinates}`} />
-                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={400} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
+                                <DetailRow label="Jenis Beras" field="riceType" value={selectedItem.riceType} icon={Package} delay={100} />
+                                <DetailRow label="Volume" field="volume" value={`${selectedItem.volume} Ton`} icon={Database} delay={150} />
+                                <DetailRow label="Harga" field="price" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
+                                <DetailRow label="Asal Produk" field="originProduct" value={selectedItem.originProduct} icon={Globe} delay={250} />
+                                <DetailRow label="Harga Asal" field="productPrice" value={`Rp ${selectedItem.productPrice}`} icon={DollarSign} delay={300} />
+                                <DetailRow label="Lokasi Dapur" field="kitchenName" value={selectedItem.kitchenName} icon={ChefHat} delay={350} subValue={`GPS: ${coordinates}`} />
+                                <DetailRow label="Alamat" field="address" value={selectedItem.address} icon={MapPin} delay={400} />
+                                <DetailRow label="PIC" field="pic" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'rte' && (
                             <>
-                                <DetailRow label="Menu" value={selectedItem.menu} icon={UtensilsCrossed} delay={100} />
-                                <DetailRow label="Volume" value={`${selectedItem.volume} Porsi`} icon={Package} delay={150} />
-                                <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
-                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={250} subValue={`GPS: ${coordinates}`} />
-                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={300} />
-                                <DetailRow label="Hotel" value={`${selectedItem.hotelName} (${selectedItem.hotelNumber || '-'})`} icon={Building} delay={350} />
-                                <DetailRow label="Kloter" value={selectedItem.kloterName} icon={User} delay={400} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
+                                <DetailRow label="Menu" field="menu" value={selectedItem.menu} icon={UtensilsCrossed} delay={100} />
+                                <DetailRow label="Volume" field="volume" value={`${selectedItem.volume} Porsi`} icon={Package} delay={150} />
+                                <DetailRow label="Harga" field="price" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
+                                <DetailRow label="Lokasi Dapur" field="kitchenName" value={selectedItem.kitchenName} icon={ChefHat} delay={250} subValue={`GPS: ${coordinates}`} />
+                                <DetailRow label="Alamat" field="address" value={selectedItem.address} icon={MapPin} delay={300} />
+                                <DetailRow label="Hotel" field="hotelName" value={`${selectedItem.hotelName} (${selectedItem.hotelNumber || '-'})`} icon={Building} delay={350} />
+                                <DetailRow label="Kloter" field="kloterName" value={selectedItem.kloterName} icon={User} delay={400} />
+                                <DetailRow label="PIC" field="pic" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'tenant' && (
                             <>
-                                <DetailRow label="Produk Utama" value={selectedItem.productType} icon={ShoppingBag} delay={100} />
-                                <DetailRow label="Produk Terlaris" value={selectedItem.bestSeller} icon={TrendingUp} delay={150} />
-                                <DetailRow label="Biaya Sewa" value={`SAR ${selectedItem.rentCost}`} icon={DollarSign} delay={200} />
-                                <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} delay={250} />
-                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={300} subValue={`GPS: ${coordinates}`} />
-                                <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} delay={350} />
-                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={400} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
+                                <DetailRow label="Produk Utama" field="productType" value={selectedItem.productType} icon={ShoppingBag} delay={100} />
+                                <DetailRow label="Produk Terlaris" field="bestSeller" value={selectedItem.bestSeller} icon={TrendingUp} delay={150} />
+                                <DetailRow label="Biaya Sewa" field="rentCost" value={`SAR ${selectedItem.rentCost}`} icon={DollarSign} delay={200} />
+                                <DetailRow label="Hotel" field="hotelName" value={selectedItem.hotelName} icon={Building} delay={250} />
+                                <DetailRow label="Lokasi" field="location" value={selectedItem.location} icon={MapPin} delay={300} subValue={`GPS: ${coordinates}`} />
+                                <DetailRow label="Sektor" field="sector" value={selectedItem.sector} icon={MapPin} delay={350} />
+                                <DetailRow label="Alamat" field="address" value={selectedItem.address} icon={MapPin} delay={400} />
+                                <DetailRow label="PIC" field="pic" value={selectedItem.pic} icon={User} delay={450} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'ekspedisi' && (
                             <>
-                                <DetailRow label="Berat Total" value={`${selectedItem.weight} Kg`} icon={Scale} delay={100} />
-                                <DetailRow label="Harga / Kg" value={`SAR ${selectedItem.pricePerKg}`} icon={DollarSign} delay={150} />
-                                <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} delay={200} />
-                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={250} subValue={`GPS: ${coordinates}`} />
-                                <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} delay={300} />
-                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={350} />
-                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={400} subValue={picContact} />
+                                <DetailRow label="Berat Total" field="weight" value={`${selectedItem.weight} Kg`} icon={Scale} delay={100} />
+                                <DetailRow label="Harga / Kg" field="pricePerKg" value={`SAR ${selectedItem.pricePerKg}`} icon={DollarSign} delay={150} />
+                                <DetailRow label="Hotel" field="hotelName" value={selectedItem.hotelName} icon={Building} delay={200} />
+                                <DetailRow label="Lokasi" field="location" value={selectedItem.location} icon={MapPin} delay={250} subValue={`GPS: ${coordinates}`} />
+                                <DetailRow label="Sektor" field="sector" value={selectedItem.sector} icon={MapPin} delay={300} />
+                                <DetailRow label="Alamat" field="address" value={selectedItem.address} icon={MapPin} delay={350} />
+                                <DetailRow label="PIC" field="pic" value={selectedItem.pic} icon={User} delay={400} subValue={picContact} />
                             </>
                         )}
                         {activeTab === 'telco' && (
                             <>
-                                <DetailRow label="Nama Jemaah" value={selectedItem.respondentName} icon={User} delay={100} />
-                                <DetailRow label="Kloter" value={selectedItem.kloter} icon={User} delay={150} />
-                                <DetailRow label="Embarkasi" value={selectedItem.embarkation} icon={MapPin} delay={200} />
-                                <DetailRow label="Provinsi" value={selectedItem.province} icon={MapPin} delay={250} />
-                                <DetailRow label="Paket Roaming" value={selectedItem.roamingPackage} icon={Signal} delay={300} />
-                                <DetailRow label="Status" value={selectedItem.roamingPackage ? 'Terisi' : 'Kosong'} icon={CheckCircle2} delay={350} />
+                                <DetailRow label="Nama Jemaah" field="respondentName" value={selectedItem.respondentName} icon={User} delay={100} />
+                                <DetailRow label="Kloter" field="kloter" value={selectedItem.kloter} icon={User} delay={150} />
+                                <DetailRow label="Embarkasi" field="embarkation" value={selectedItem.embarkation} icon={MapPin} delay={200} />
+                                <DetailRow label="Provinsi" field="province" value={selectedItem.province} icon={MapPin} delay={250} />
+                                <DetailRow label="Paket Roaming" field="roamingPackage" value={selectedItem.roamingPackage} icon={Signal} delay={300} />
+                                <DetailRow label="Status" field="roamingPackage" value={selectedItem.roamingPackage ? 'Terisi' : 'Kosong'} icon={CheckCircle2} delay={350} />
                             </>
                         )}
                     </div>
