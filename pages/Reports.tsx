@@ -577,14 +577,17 @@ export const Reports: React.FC = () => {
   const DetailModal = () => {
     if (!selectedItem) return null;
 
-    const DetailRow = ({ label, value, icon: Icon }: any) => (
-      <div className="group flex items-start gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-[#064E3B]/20 transition-all duration-300">
-        <div className="p-2.5 bg-[#064E3B]/5 rounded-xl text-[#064E3B] shrink-0 group-hover:bg-[#064E3B] group-hover:text-[#D4AF37] transition-colors duration-300">
-          <Icon size={18} />
+    const DetailRow = ({ label, value, icon: Icon, delay }: any) => (
+      <div 
+        className="group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(6,78,59,0.08)] hover:border-[#064E3B]/20 transition-all duration-300 hover:-translate-y-0.5 animate-fade-in-up fill-mode-forwards opacity-0"
+        style={{ animationDelay: `${delay}ms` }}
+      >
+        <div className="p-2.5 bg-gradient-to-br from-[#064E3B]/5 to-[#064E3B]/10 rounded-lg text-[#064E3B] shrink-0 group-hover:from-[#064E3B] group-hover:to-[#043025] group-hover:text-[#D4AF37] transition-all duration-300 shadow-inner">
+          <Icon size={18} strokeWidth={1.5} />
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-          <p className="text-sm font-bold text-gray-800 break-words leading-snug">{value || '-'}</p>
+        <div className="min-w-0 flex-1 pt-0.5">
+          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 group-hover:text-[#064E3B]/70 transition-colors">{label}</p>
+          <p className="text-sm font-bold text-gray-800 break-words leading-snug line-clamp-2">{value || '-'}</p>
         </div>
       </div>
     );
@@ -592,140 +595,150 @@ export const Reports: React.FC = () => {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
         <div 
-            className="absolute inset-0 bg-[#064E3B]/20 backdrop-blur-md transition-opacity animate-fade-in" 
+            className="absolute inset-0 bg-[#000000]/70 backdrop-blur-md transition-opacity duration-300 animate-fade-in" 
             onClick={() => setSelectedItem(null)}
         />
-        <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl ring-1 ring-black/5 overflow-hidden animate-zoom-in flex flex-col max-h-[85vh]">
-            {/* Header */}
-            <div className="relative h-40 bg-gradient-to-br from-[#064E3B] to-[#043025] flex items-end p-8 overflow-hidden shrink-0">
-                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                
-                {/* Decorative Circles */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full mix-blend-overlay opacity-20 blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-400 rounded-full mix-blend-overlay opacity-10 blur-2xl translate-y-1/3 -translate-x-1/3"></div>
-                
-                <button 
-                    onClick={() => setSelectedItem(null)}
-                    className="absolute top-6 right-6 p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all duration-300 backdrop-blur-md z-20 group border border-white/10 hover:border-white/30 hover:rotate-90"
-                >
-                    <X size={20} />
-                </button>
+        <div className="relative w-full max-w-5xl bg-[#F8F9FA] rounded-[2rem] shadow-2xl ring-1 ring-white/20 overflow-hidden animate-zoom-in flex flex-col md:flex-row max-h-[90vh] md:h-auto border border-white/40">
+            
+            {/* LEFT SIDE: Header & Surveyor Info */}
+            <div className="w-full md:w-[40%] bg-gradient-to-br from-[#064E3B] via-[#053D2E] to-[#022C22] p-8 flex flex-col justify-between relative overflow-hidden group shrink-0">
+                {/* Pattern & Decor */}
+                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full mix-blend-overlay opacity-20 blur-[50px] -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500 rounded-full mix-blend-overlay opacity-10 blur-[40px] translate-y-1/3 -translate-x-1/3"></div>
 
-                <div className="relative z-10 w-full">
-                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="px-3 py-1 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm">
+                {/* Top Content */}
+                <div className="relative z-10 space-y-6">
+                    <div className="flex flex-wrap gap-2">
+                        <span className="px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit">
+                            {activeTab === 'bumbu' && <ChefHat size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'beras' && <ShoppingCart size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'rte' && <UtensilsCrossed size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'tenant' && <Store size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'ekspedisi' && <Truck size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'telco' && <Signal size={12} className="text-[#D4AF37]" />}
+                            
                             {activeTab === 'bumbu' ? 'Konsumsi Bumbu' : 
                              activeTab === 'beras' ? 'Monitoring Beras' : 
                              activeTab === 'rte' ? 'RTE (Siap Saji)' : 
                              activeTab === 'tenant' ? 'Tenant Hotel' : 
                              activeTab === 'ekspedisi' ? 'Ekspedisi' : 'Telekomunikasi'}
                         </span>
-                        <span className="px-3 py-1 rounded-lg bg-[#D4AF37] text-[#064E3B] text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20 flex items-center gap-1.5">
-                            <Calendar size={10} />
+                        <span className="px-3 py-1.5 rounded-lg bg-[#D4AF37] text-[#064E3B] text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20 flex items-center gap-1.5 w-fit">
+                            <Calendar size={12} />
                             {selectedItem.date}
                         </span>
                     </div>
-                    <h2 className="text-3xl font-bold text-white leading-tight line-clamp-2 drop-shadow-sm">
+
+                    <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight">
                         {selectedItem.name || selectedItem.companyName || selectedItem.shopName || selectedItem.providerName}
                     </h2>
                 </div>
-            </div>
 
-            {/* Content - Scrollable */}
-            <div className="p-8 overflow-y-auto custom-scrollbar bg-gray-50/30">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {activeTab === 'bumbu' && (
-                        <>
-                            <DetailRow label="Perusahaan" value={selectedItem.companyName} icon={Building2} />
-                            <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} />
-                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
-                            <DetailRow label="PIC Dapur" value={selectedItem.pic} icon={User} />
-                            <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Package} />
-                            <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} />
-                            <DetailRow label="Bahan Lain" value={selectedItem.otherIngredients} icon={FileText} />
-                            <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} />
-                        </>
-                    )}
-                    {activeTab === 'beras' && (
-                        <>
-                            <DetailRow label="Jenis Beras" value={selectedItem.riceType} icon={Package} />
-                            <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Database} />
-                            <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} />
-                            <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} />
-                            <DetailRow label="Harga Asal" value={`Rp ${selectedItem.productPrice}`} icon={DollarSign} />
-                            <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} />
-                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
-                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
-                        </>
-                    )}
-                    {activeTab === 'rte' && (
-                        <>
-                            <DetailRow label="Menu" value={selectedItem.menu} icon={UtensilsCrossed} />
-                            <DetailRow label="Volume" value={`${selectedItem.volume} Porsi`} icon={Package} />
-                            <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} />
-                            <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} />
-                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
-                            <DetailRow label="Hotel" value={`${selectedItem.hotelName} (${selectedItem.hotelNumber || '-'})`} icon={Building} />
-                            <DetailRow label="Kloter" value={selectedItem.kloterName} icon={User} />
-                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
-                        </>
-                    )}
-                    {activeTab === 'tenant' && (
-                        <>
-                            <DetailRow label="Produk Utama" value={selectedItem.productType} icon={ShoppingBag} />
-                            <DetailRow label="Produk Terlaris" value={selectedItem.bestSeller} icon={TrendingUp} />
-                            <DetailRow label="Biaya Sewa" value={`SAR ${selectedItem.rentCost}`} icon={DollarSign} />
-                            <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} />
-                            <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} />
-                            <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} />
-                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
-                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
-                        </>
-                    )}
-                    {activeTab === 'ekspedisi' && (
-                        <>
-                            <DetailRow label="Berat Total" value={`${selectedItem.weight} Kg`} icon={Scale} />
-                            <DetailRow label="Harga / Kg" value={`SAR ${selectedItem.pricePerKg}`} icon={DollarSign} />
-                            <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} />
-                            <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} />
-                            <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} />
-                            <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} />
-                            <DetailRow label="PIC" value={selectedItem.pic} icon={User} />
-                        </>
-                    )}
-                    {activeTab === 'telco' && (
-                        <>
-                            <DetailRow label="Nama Jemaah" value={selectedItem.respondentName} icon={User} />
-                            <DetailRow label="Kloter" value={selectedItem.kloter} icon={User} />
-                            <DetailRow label="Embarkasi" value={selectedItem.embarkation} icon={MapPin} />
-                            <DetailRow label="Provinsi" value={selectedItem.province} icon={MapPin} />
-                            <DetailRow label="Paket Roaming" value={selectedItem.roamingPackage} icon={Signal} />
-                            <DetailRow label="Status" value={selectedItem.roamingPackage ? 'Terisi' : 'Kosong'} icon={CheckCircle2} />
-                        </>
-                    )}
-                </div>
-                
-                {/* Footer / Surveyor Info */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                    <div className="flex items-center justify-between bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#064E3B] to-[#043025] flex items-center justify-center text-[#D4AF37] shadow-lg shadow-[#064E3B]/20">
-                                <User size={24} />
-                            </div>
-                            <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Disurvei Oleh</p>
-                                <p className="text-base font-bold text-gray-800">{selectedItem.surveyor || '-'}</p>
-                            </div>
+                {/* Bottom Content: Surveyor */}
+                <div className="relative z-10 mt-8 md:mt-0 pt-6 border-t border-white/10">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B4941F] flex items-center justify-center text-[#064E3B] shadow-lg ring-2 ring-white/20">
+                            <User size={24} strokeWidth={2} />
                         </div>
-                        <div className="text-right">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Waktu Survei</p>
-                            <div className="flex items-center justify-end gap-2 text-base font-bold text-[#064E3B]">
-                                <div className="p-1.5 bg-[#D4AF37]/10 rounded-lg">
-                                    <Clock size={16} className="text-[#D4AF37]" />
-                                </div>
+                        <div>
+                            <p className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider mb-0.5">Disurvei Oleh</p>
+                            <p className="text-base font-bold text-white">{selectedItem.surveyor || '-'}</p>
+                            <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-100/80 mt-0.5">
+                                <Clock size={12} />
                                 {selectedItem.time || '-'}
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* RIGHT SIDE: Details Grid */}
+            <div className="w-full md:w-[60%] bg-[#F8F9FA] p-8 relative flex flex-col">
+                {/* Close Button */}
+                <button 
+                    onClick={() => setSelectedItem(null)}
+                    className="absolute top-6 right-6 p-2 bg-white hover:bg-gray-50 text-gray-400 hover:text-red-500 rounded-full transition-all duration-300 z-20 border border-gray-200 hover:border-red-200 hover:rotate-90 shadow-sm"
+                >
+                    <X size={20} />
+                </button>
+
+                <div className="flex-1 flex flex-col justify-center">
+                    <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <div className="w-1 h-6 bg-[#D4AF37] rounded-full"></div>
+                        Detail Data
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {activeTab === 'bumbu' && (
+                            <>
+                                <DetailRow label="Perusahaan" value={selectedItem.companyName} icon={Building2} delay={100} />
+                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={150} />
+                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={200} />
+                                <DetailRow label="PIC Dapur" value={selectedItem.pic} icon={User} delay={250} />
+                                <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Package} delay={300} />
+                                <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={350} />
+                                <DetailRow label="Bahan Lain" value={selectedItem.otherIngredients} icon={FileText} delay={400} />
+                                <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} delay={450} />
+                            </>
+                        )}
+                        {activeTab === 'beras' && (
+                            <>
+                                <DetailRow label="Jenis Beras" value={selectedItem.riceType} icon={Package} delay={100} />
+                                <DetailRow label="Volume" value={`${selectedItem.volume} Ton`} icon={Database} delay={150} />
+                                <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
+                                <DetailRow label="Asal Produk" value={selectedItem.originProduct} icon={Globe} delay={250} />
+                                <DetailRow label="Harga Asal" value={`Rp ${selectedItem.productPrice}`} icon={DollarSign} delay={300} />
+                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={350} />
+                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={400} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} />
+                            </>
+                        )}
+                        {activeTab === 'rte' && (
+                            <>
+                                <DetailRow label="Menu" value={selectedItem.menu} icon={UtensilsCrossed} delay={100} />
+                                <DetailRow label="Volume" value={`${selectedItem.volume} Porsi`} icon={Package} delay={150} />
+                                <DetailRow label="Harga" value={`SAR ${selectedItem.price}`} icon={DollarSign} delay={200} />
+                                <DetailRow label="Lokasi Dapur" value={selectedItem.kitchenName} icon={ChefHat} delay={250} />
+                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={300} />
+                                <DetailRow label="Hotel" value={`${selectedItem.hotelName} (${selectedItem.hotelNumber || '-'})`} icon={Building} delay={350} />
+                                <DetailRow label="Kloter" value={selectedItem.kloterName} icon={User} delay={400} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} />
+                            </>
+                        )}
+                        {activeTab === 'tenant' && (
+                            <>
+                                <DetailRow label="Produk Utama" value={selectedItem.productType} icon={ShoppingBag} delay={100} />
+                                <DetailRow label="Produk Terlaris" value={selectedItem.bestSeller} icon={TrendingUp} delay={150} />
+                                <DetailRow label="Biaya Sewa" value={`SAR ${selectedItem.rentCost}`} icon={DollarSign} delay={200} />
+                                <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} delay={250} />
+                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={300} />
+                                <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} delay={350} />
+                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={400} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={450} />
+                            </>
+                        )}
+                        {activeTab === 'ekspedisi' && (
+                            <>
+                                <DetailRow label="Berat Total" value={`${selectedItem.weight} Kg`} icon={Scale} delay={100} />
+                                <DetailRow label="Harga / Kg" value={`SAR ${selectedItem.pricePerKg}`} icon={DollarSign} delay={150} />
+                                <DetailRow label="Hotel" value={selectedItem.hotelName} icon={Building} delay={200} />
+                                <DetailRow label="Lokasi" value={selectedItem.location} icon={MapPin} delay={250} />
+                                <DetailRow label="Sektor" value={selectedItem.sector} icon={MapPin} delay={300} />
+                                <DetailRow label="Alamat" value={selectedItem.address} icon={MapPin} delay={350} />
+                                <DetailRow label="PIC" value={selectedItem.pic} icon={User} delay={400} />
+                            </>
+                        )}
+                        {activeTab === 'telco' && (
+                            <>
+                                <DetailRow label="Nama Jemaah" value={selectedItem.respondentName} icon={User} delay={100} />
+                                <DetailRow label="Kloter" value={selectedItem.kloter} icon={User} delay={150} />
+                                <DetailRow label="Embarkasi" value={selectedItem.embarkation} icon={MapPin} delay={200} />
+                                <DetailRow label="Provinsi" value={selectedItem.province} icon={MapPin} delay={250} />
+                                <DetailRow label="Paket Roaming" value={selectedItem.roamingPackage} icon={Signal} delay={300} />
+                                <DetailRow label="Status" value={selectedItem.roamingPackage ? 'Terisi' : 'Kosong'} icon={CheckCircle2} delay={350} />
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
@@ -735,6 +748,7 @@ export const Reports: React.FC = () => {
   };
 
   return (
+    <>
     <div className="space-y-8 animate-fade-in-up pb-10">
         
         <HeroSection
@@ -876,9 +890,10 @@ export const Reports: React.FC = () => {
                 </div>
             </div>
         </GlassCard>
-
-        {/* Render Detail Modal */}
-        <DetailModal />
     </div>
+    
+    {/* Render Detail Modal */}
+    <DetailModal />
+    </>
   );
 };
