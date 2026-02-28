@@ -103,7 +103,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             pic: idx % 2 === 0 ? 'Abdullah Al-Indunisi' : 'Siti Aminah',
             surveyor: getRandomSurveyor(),
             date: '20/06/2026',
-            time: '08:30'
+            time: '08:30',
+            notes: (idx + 1) % 2 === 0 ? "Laporan telah dikirim dan diverifikasi. Kondisi penyimpanan baik." : "Laporan masih dalam bentuk draf. Menunggu kelengkapan data."
         }));
         setBumbuMakkah(mapBumbu(bumbuSource, 'Makkah'));
         setBumbuMadinah(mapBumbu(bumbuSource, 'Madinah'));
@@ -124,7 +125,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
              pic: 'Muhammad Ali',
              surveyor: getRandomSurveyor(),
              date: '21/06/2026',
-             time: '11:00'
+             time: '11:00',
+             notes: (idx + 1) % 2 === 0 ? "Laporan telah dikirim dan diverifikasi. Menu sesuai standar." : "Laporan masih dalam bentuk draf. Menunggu persetujuan menu."
         }));
         setRteData(rteInit);
 
@@ -143,7 +145,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 pic: 'H. Slamet',
                 surveyor: 'Zainul Syaifudin',
                 date: '22/06/2026',
-                time: '09:00'
+                time: '09:00',
+                notes: "Laporan masih dalam bentuk draf. Menunggu kelengkapan data."
             },
             { 
                 id: 2, 
@@ -206,7 +209,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 pic: 'Rudi Hartono',
                 surveyor: 'Zainul Syaifudin',
                 date: '23/06/2026',
-                time: '14:00'
+                time: '14:00',
+                notes: "Laporan masih dalam bentuk draf. Menunggu kelengkapan data."
             },
             { 
                 id: 2, 
@@ -269,7 +273,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 pic: 'H. Maman',
                 surveyor: 'Zainul Syaifudin',
                 date: '19/06/2026',
-                time: '07:00'
+                time: '07:00',
+                notes: "Laporan masih dalam bentuk draf. Menunggu kelengkapan data."
             },
             { 
                 id: 2, 

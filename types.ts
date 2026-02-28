@@ -22,6 +22,7 @@ export interface BumbuRecord {
   surveyor?: string;
   date?: string;
   time?: string;
+  notes?: string;
 }
 
 export interface RTERecord {
@@ -41,6 +42,7 @@ export interface RTERecord {
   surveyor?: string;
   date?: string;
   time?: string;
+  notes?: string;
 }
 
 export interface TenantRecord {
@@ -58,6 +60,7 @@ export interface TenantRecord {
   surveyor?: string;
   date?: string;
   time?: string;
+  notes?: string;
 }
 
 export interface ExpeditionRecord {
@@ -74,6 +77,7 @@ export interface ExpeditionRecord {
   surveyor?: string;
   date?: string;
   time?: string;
+  notes?: string;
 }
 
 export interface TelecomRecord {
@@ -87,6 +91,7 @@ export interface TelecomRecord {
   province?: string;    // Added from PDF Page 13
   surveyor?: string;
   date?: string;
+  notes?: string;
 }
 
 export interface RiceRecord {
@@ -106,6 +111,7 @@ export interface RiceRecord {
   surveyor?: string;
   date?: string;
   time?: string;
+  notes?: string;
 }
 
 export enum Page {

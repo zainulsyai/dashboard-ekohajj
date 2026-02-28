@@ -4,6 +4,7 @@ import { GlassCard } from '../components/GlassCard';
 import { ChefHat, UtensilsCrossed, Truck, Store, Signal, Download, Printer, Filter, Search, MapPin, User, Calendar, Clock, Building, ShoppingCart, ChevronDown, Check, ArrowDownUp, Database, X, Building2, Package, DollarSign, FileText, Globe, ShoppingBag, TrendingUp, Scale, CheckCircle2, Edit, Save } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
 import { useUser } from '../contexts/UserContext';
+import { Role } from '../types';
 import { TableRowSkeleton } from '../components/Skeletons';
 import { HeroSection } from '../components/HeroSection';
 
@@ -579,21 +580,39 @@ export const Reports: React.FC = () => {
     const { user } = useUser();
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState<any>({});
+    const [showToast, setShowToast] = useState(false);
     const { 
         setBumbuMakkah, setBumbuMadinah, setRteData, setTenantData, setExpeditionData, setTelecomData, setRiceData 
     } = useData();
 
+    // Generate dummy extra details for visual richness
+    const surveyId = selectedItem ? `SRV-2026-${selectedItem.id.toString().padStart(4, '0')}` : '';
+    // Status logic: Even IDs are Verified (Sent), Odd IDs are Draft (Not Sent)
+    const status = selectedItem ? (selectedItem.id % 2 === 0 ? 'Verified' : 'Draft') : '';
+    const statusColor = status === 'Verified' ? 'bg-emerald-500' : 'bg-gray-400';
+    const statusTextColor = status === 'Verified' ? 'text-emerald-100/80' : 'text-gray-300/80';
+    const coordinates = selectedItem ? `${(21.3891 + Math.random() * 0.1).toFixed(6)}, ${(39.8579 + Math.random() * 0.1).toFixed(6)}` : '';
+    const picContact = selectedItem ? `+966 5${Math.floor(Math.random() * 90000000 + 10000000)}` : '';
+    
+    const defaultNotes = status === 'Verified' 
+        ? "Laporan telah dikirim dan diverifikasi. Kondisi penyimpanan baik, suhu ruangan terkontrol. Stok mencukupi."
+        : "Laporan masih dalam bentuk draf. Menunggu kelengkapan data foto dan tanda tangan digital PIC sebelum dikirim.";
+
     useEffect(() => {
         if (selectedItem) {
-            setEditForm({ ...selectedItem });
+            setEditForm({ 
+                ...selectedItem, 
+                notes: selectedItem.notes || defaultNotes 
+            });
             setIsEditing(false);
+            setShowToast(false);
         }
     }, [selectedItem]);
 
     if (!selectedItem) return null;
 
     // Permission Check: Only Surveyor or Admin can edit
-    const canEdit = user.role === 'ADMINISTRATOR' || user.name === selectedItem.surveyor;
+    const canEdit = user.role === Role.ADMINISTRATOR || user.name === selectedItem.surveyor;
 
     const handleSave = () => {
         // Update local state (simulating API call)
@@ -615,25 +634,13 @@ export const Reports: React.FC = () => {
 
         setSelectedItem({ ...editForm });
         setIsEditing(false);
-        // Ideally show a toast here
-        alert('Data berhasil disimpan!');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
     };
-
-    // Generate dummy extra details for visual richness
-    const surveyId = `SRV-2026-${selectedItem.id.toString().padStart(4, '0')}`;
-    // Status logic: Even IDs are Verified (Sent), Odd IDs are Draft (Not Sent)
-    const status = selectedItem.id % 2 === 0 ? 'Verified' : 'Draft';
-    const statusColor = status === 'Verified' ? 'bg-emerald-500' : 'bg-gray-400';
-    const statusTextColor = status === 'Verified' ? 'text-emerald-100/80' : 'text-gray-300/80';
-    const coordinates = `${(21.3891 + Math.random() * 0.1).toFixed(6)}, ${(39.8579 + Math.random() * 0.1).toFixed(6)}`;
-    const picContact = `+966 5${Math.floor(Math.random() * 90000000 + 10000000)}`;
-    const notes = status === 'Verified' 
-        ? "Laporan telah dikirim dan diverifikasi. Kondisi penyimpanan baik, suhu ruangan terkontrol. Stok mencukupi."
-        : "Laporan masih dalam bentuk draf. Menunggu kelengkapan data foto dan tanda tangan digital PIC sebelum dikirim.";
 
     const DetailRow = ({ label, field, value, icon: Icon, delay, subValue }: any) => (
       <div 
-        className={`group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(6,78,59,0.08)] hover:border-[#064E3B]/20 transition-all duration-300 hover:-translate-y-0.5 animate-fade-in-up fill-mode-forwards opacity-0 ${isEditing ? 'ring-2 ring-[#D4AF37]/20' : ''}`}
+        className={`group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(6,78,59,0.08)] hover:border-[#064E3B]/20 transition-all duration-300 hover:-translate-y-0.5 animate-fade-in-up fill-mode-forwards opacity-0 ${isEditing ? 'ring-2 ring-[#D4AF37]/20 bg-gray-50/30' : ''}`}
         style={{ animationDelay: `${delay}ms` }}
       >
         <div className="p-2.5 bg-gradient-to-br from-[#064E3B]/5 to-[#064E3B]/10 rounded-lg text-[#064E3B] shrink-0 group-hover:from-[#064E3B] group-hover:to-[#043025] group-hover:text-[#D4AF37] transition-all duration-300 shadow-inner">
@@ -647,7 +654,8 @@ export const Reports: React.FC = () => {
                 type="text" 
                 value={editForm[field] || ''} 
                 onChange={(e) => setEditForm({ ...editForm, [field]: e.target.value })}
-                className="w-full text-sm font-bold text-gray-800 border-b border-gray-300 focus:border-[#064E3B] outline-none bg-transparent py-0.5 transition-colors"
+                className="w-full text-sm font-bold text-gray-800 border-b-2 border-gray-200 focus:border-[#064E3B] outline-none bg-white/50 px-1 py-0.5 rounded transition-all placeholder-gray-300"
+                placeholder={`Input ${label}...`}
               />
           ) : (
               <p className="text-sm font-bold text-gray-800 break-words leading-snug line-clamp-2">{value || '-'}</p>
@@ -666,6 +674,14 @@ export const Reports: React.FC = () => {
         />
         <div className="relative w-full max-w-5xl bg-[#F8F9FA] rounded-[2rem] shadow-2xl ring-1 ring-white/20 overflow-hidden animate-zoom-in flex flex-col md:flex-row max-h-[90vh] md:h-auto border border-white/40">
             
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-[#064E3B] text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-fade-in-down border border-[#D4AF37]/20">
+                    <CheckCircle2 size={16} className="text-[#D4AF37]" />
+                    <span className="text-xs font-bold">Perubahan berhasil disimpan</span>
+                </div>
+            )}
+
             {/* LEFT SIDE: Header & Surveyor Info */}
             <div className="w-full md:w-[40%] bg-gradient-to-br from-[#064E3B] via-[#053D2E] to-[#022C22] p-8 flex flex-col justify-between relative overflow-hidden group shrink-0">
                 {/* Pattern & Decor */}
@@ -706,7 +722,7 @@ export const Reports: React.FC = () => {
                                     const field = activeTab === 'tenant' ? 'shopName' : activeTab === 'telco' ? 'providerName' : activeTab === 'bumbu' ? 'name' : 'companyName';
                                     setEditForm({ ...editForm, [field]: e.target.value });
                                 }}
-                                className="text-3xl md:text-4xl font-bold text-white bg-transparent border-b border-white/20 focus:border-[#D4AF37] outline-none w-full mb-2"
+                                className="text-3xl md:text-4xl font-bold text-white bg-white/10 border-b border-white/20 focus:border-[#D4AF37] outline-none w-full mb-2 rounded px-2 py-1"
                              />
                         ) : (
                             <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight mb-2">
@@ -764,7 +780,7 @@ export const Reports: React.FC = () => {
 
                 {/* Edit Actions */}
                 {canEdit && (
-                    <div className="absolute top-6 right-16 z-20 flex gap-2">
+                    <div className="absolute top-6 right-24 z-20 flex gap-4">
                         {isEditing ? (
                             <>
                                 <button 
@@ -877,9 +893,18 @@ export const Reports: React.FC = () => {
                             <FileText size={12} />
                             Catatan Surveyor
                         </h4>
-                        <p className="text-xs text-gray-600 leading-relaxed italic">
-                            "{notes}"
-                        </p>
+                        {isEditing ? (
+                            <textarea
+                                value={editForm.notes || ''}
+                                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                                className="w-full text-xs text-gray-600 leading-relaxed italic bg-white border border-gray-200 rounded-lg p-2 focus:border-[#064E3B] outline-none min-h-[80px] shadow-sm"
+                                placeholder="Tambahkan catatan..."
+                            />
+                        ) : (
+                            <p className="text-xs text-gray-600 leading-relaxed italic">
+                                "{editForm.notes || defaultNotes}"
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
