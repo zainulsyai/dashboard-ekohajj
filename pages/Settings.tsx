@@ -262,7 +262,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                     <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-3xl w-full mx-auto overflow-hidden flex flex-col md:flex-row min-h-[400px]">
                         
                         {/* Left Side: Visual Identity */}
-                        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex flex-col items-center justify-center p-8 text-white text-center z-10">
+                        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex flex-col items-center justify-center p-6 md:p-8 text-white text-center z-10">
                             {/* Decorative Patterns */}
                             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
@@ -627,48 +627,54 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                     >
                         <div className="space-y-3">
                             <div className="flex items-center justify-between p-4 rounded-xl hover:bg-white transition-all border border-transparent hover:border-gray-100 hover:shadow-sm group">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                                    <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                                         <Bell size={20} />
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">Notifikasi</h4>
-                                        <p className="text-[11px] text-gray-500">Terima update real-time</p>
+                                    <div className="min-w-0">
+                                        <h4 className="text-sm font-bold text-gray-800 group-hover:text-indigo-700 transition-colors truncate">Notifikasi</h4>
+                                        <p className="text-[11px] text-gray-500 truncate">Terima update real-time</p>
                                     </div>
                                 </div>
-                                <Toggle checked={notifications} onChange={(val) => { setNotifications(val); handleSettingChange('Notifikasi', val); }} />
+                                <div className="flex-shrink-0 ml-2">
+                                    <Toggle checked={notifications} onChange={(val) => { setNotifications(val); handleSettingChange('Notifikasi', val); }} />
+                                </div>
                             </div>
 
                             <div className="flex items-center justify-between p-4 rounded-xl hover:bg-white transition-all border border-transparent hover:border-gray-100 hover:shadow-sm group">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-2.5 bg-slate-50 text-slate-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                                    <div className="p-2.5 bg-slate-50 text-slate-600 rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                                         <Moon size={20} />
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-gray-800 group-hover:text-slate-700 transition-colors">Mode Gelap</h4>
-                                        <p className="text-[11px] text-gray-500">Tampilan ramah mata</p>
+                                    <div className="min-w-0">
+                                        <h4 className="text-sm font-bold text-gray-800 group-hover:text-slate-700 transition-colors truncate">Mode Gelap</h4>
+                                        <p className="text-[11px] text-gray-500 truncate">Tampilan ramah mata</p>
                                     </div>
                                 </div>
-                                <Toggle checked={darkMode} onChange={(val) => { setDarkMode(val); handleSettingChange('Mode Gelap', val); }} />
+                                <div className="flex-shrink-0 ml-2">
+                                    <Toggle checked={darkMode} onChange={(val) => { setDarkMode(val); handleSettingChange('Mode Gelap', val); }} />
+                                </div>
                             </div>
 
                             <div className="flex items-center justify-between p-4 rounded-xl hover:bg-white transition-all border border-transparent hover:border-gray-100 hover:shadow-sm group">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                                    <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                                         <Globe size={20} />
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-gray-800 group-hover:text-emerald-700 transition-colors">Bahasa / Language</h4>
-                                        <p className="text-[11px] text-gray-500">Pilih bahasa aplikasi</p>
+                                    <div className="min-w-0">
+                                        <h4 className="text-sm font-bold text-gray-800 group-hover:text-emerald-700 transition-colors truncate">Bahasa / Language</h4>
+                                        <p className="text-[11px] text-gray-500 truncate">Pilih bahasa aplikasi</p>
                                     </div>
                                 </div>
-                                <LanguageToggle 
-                                    isEnglish={isEnglish} 
-                                    onChange={(val) => { 
-                                        setIsEnglish(val); 
-                                        showToast(`Bahasa diubah ke ${val ? 'English' : 'Indonesia'}`, 'success'); 
-                                    }} 
-                                />
+                                <div className="flex-shrink-0 ml-2">
+                                    <LanguageToggle 
+                                        isEnglish={isEnglish} 
+                                        onChange={(val) => { 
+                                            setIsEnglish(val); 
+                                            showToast(`Bahasa diubah ke ${val ? 'English' : 'Indonesia'}`, 'success'); 
+                                        }} 
+                                    />
+                                </div>
                             </div>
                         </div>
                     </GlassCard>

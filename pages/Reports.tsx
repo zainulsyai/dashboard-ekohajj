@@ -411,20 +411,20 @@ export const Reports: React.FC = () => {
       }
 
       return (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden animate-fade-in-up">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:hidden animate-fade-in-up">
               {processedData.map((row: any, idx) => (
                   <div 
                     key={idx} 
                     onClick={() => setSelectedItem(row)}
-                    className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden cursor-pointer"
+                    className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm transition-all duration-200 active:scale-[0.99] active:bg-gray-50 relative overflow-hidden cursor-pointer"
                   >
                       {/* Decoration */}
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-bl-full -mr-4 -mt-4 opacity-50"></div>
 
                       {/* Header: Main Title & Status/Price */}
-                      <div className="flex justify-between items-start gap-3 relative z-10 mb-4">
+                      <div className="flex justify-between items-start gap-3 relative z-10 mb-3">
                           <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
+                              <div className="flex items-center gap-2 mb-1.5">
                                   <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
                                       {activeTab === 'bumbu' ? 'Bumbu' : 
                                        activeTab === 'beras' ? 'Beras' : 
@@ -434,10 +434,10 @@ export const Reports: React.FC = () => {
                                   </span>
                                   {row.date && <span className="text-[9px] text-gray-400 flex items-center gap-1"><Clock size={8} /> {row.date}</span>}
                               </div>
-                              <h4 className="font-bold text-gray-800 text-base leading-tight line-clamp-2">
+                              <h4 className="font-bold text-gray-800 text-sm md:text-base leading-tight line-clamp-2">
                                   {row.name || row.companyName || row.shopName || row.providerName}
                               </h4>
-                              <p className="text-xs text-gray-500 mt-1 font-medium line-clamp-1">
+                              <p className="text-[10px] md:text-xs text-gray-500 mt-1 font-medium line-clamp-1">
                                   {row.kitchenName || row.riceType || row.menu || row.hotelName || row.respondentName || row.companyName}
                               </p>
                           </div>
@@ -445,7 +445,7 @@ export const Reports: React.FC = () => {
                           {/* Price or Status Badge */}
                           <div className="flex flex-col items-end gap-1">
                               {(row.price || row.rentCost || row.pricePerKg) && (
-                                  <span className="text-xs font-bold text-[#D4AF37] bg-[#D4AF37]/10 px-2.5 py-1.5 rounded-lg whitespace-nowrap border border-[#D4AF37]/20">
+                                  <span className="text-[10px] md:text-xs font-bold text-[#D4AF37] bg-[#D4AF37]/10 px-2 py-1 rounded-lg whitespace-nowrap border border-[#D4AF37]/20">
                                       SAR {row.price || row.rentCost || row.pricePerKg}
                                   </span>
                               )}
@@ -458,7 +458,7 @@ export const Reports: React.FC = () => {
                       </div>
 
                       {/* Details Grid */}
-                      <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-xs text-gray-600 border-t border-gray-50 pt-4 relative z-10">
+                      <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[10px] md:text-xs text-gray-600 border-t border-gray-50 pt-3 relative z-10">
                           
                           {/* Location / Origin */}
                           {(row.loc || row.location || row.address || row.province || row.originProduct) && (
@@ -640,14 +640,14 @@ export const Reports: React.FC = () => {
 
     const DetailRow = ({ label, field, value, icon: Icon, delay, subValue }: any) => (
       <div 
-        className={`group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_16px_rgba(6,78,59,0.08)] hover:border-[#064E3B]/20 transition-all duration-300 hover:-translate-y-0.5 animate-fade-in-up fill-mode-forwards opacity-0 ${isEditing ? 'ring-2 ring-[#D4AF37]/20 bg-gray-50/30' : ''}`}
+        className={`group flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all duration-300 animate-fade-in-up fill-mode-forwards opacity-0 ${isEditing ? 'ring-2 ring-[#D4AF37]/20 bg-gray-50/30' : ''}`}
         style={{ animationDelay: `${delay}ms` }}
       >
-        <div className="p-2.5 bg-gradient-to-br from-[#064E3B]/5 to-[#064E3B]/10 rounded-lg text-[#064E3B] shrink-0 group-hover:from-[#064E3B] group-hover:to-[#043025] group-hover:text-[#D4AF37] transition-all duration-300 shadow-inner">
+        <div className="p-2.5 bg-gradient-to-br from-[#064E3B]/5 to-[#064E3B]/10 rounded-lg text-[#064E3B] shrink-0 transition-all duration-300 shadow-inner">
           <Icon size={18} strokeWidth={1.5} />
         </div>
         <div className="min-w-0 flex-1 pt-0.5 w-full">
-          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 group-hover:text-[#064E3B]/70 transition-colors">{label}</p>
+          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 transition-colors">{label}</p>
           
           {isEditing && field ? (
               <input 
@@ -672,8 +672,18 @@ export const Reports: React.FC = () => {
             className="absolute inset-0 bg-[#000000]/70 backdrop-blur-md transition-opacity duration-300 animate-fade-in" 
             onClick={() => !isEditing && setSelectedItem(null)}
         />
-        <div className="relative w-full max-w-5xl bg-[#F8F9FA] rounded-[2rem] shadow-2xl ring-1 ring-white/20 overflow-hidden animate-zoom-in flex flex-col md:flex-row max-h-[90vh] md:h-auto border border-white/40">
+        <div className="relative w-full max-w-5xl bg-[#F8F9FA] rounded-[2rem] shadow-2xl ring-1 ring-white/20 animate-zoom-in flex flex-col md:flex-row max-h-[90vh] border border-white/40 overflow-y-auto md:overflow-hidden">
             
+            {/* Close Button - Global Position */}
+            {!isEditing && (
+                <button 
+                    onClick={() => setSelectedItem(null)}
+                    className="absolute top-4 right-4 z-50 p-2 rounded-full transition-all duration-300 border shadow-sm bg-white/10 text-white border-white/20 hover:bg-white/20 md:bg-white md:text-gray-400 md:border-gray-200 md:hover:bg-gray-50 md:hover:text-red-500"
+                >
+                    <X size={20} />
+                </button>
+            )}
+
             {/* Toast Notification */}
             {showToast && (
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-[#064E3B] text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-fade-in-down border border-[#D4AF37]/20">
@@ -683,7 +693,7 @@ export const Reports: React.FC = () => {
             )}
 
             {/* LEFT SIDE: Header & Surveyor Info */}
-            <div className="w-full md:w-[40%] bg-gradient-to-br from-[#064E3B] via-[#053D2E] to-[#022C22] p-8 flex flex-col justify-between relative overflow-hidden group shrink-0">
+            <div className="w-full md:w-[40%] bg-gradient-to-br from-[#064E3B] via-[#053D2E] to-[#022C22] p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group shrink-0">
                 {/* Pattern & Decor */}
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full mix-blend-overlay opacity-20 blur-[50px] -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
@@ -767,20 +777,10 @@ export const Reports: React.FC = () => {
             </div>
 
             {/* RIGHT SIDE: Details Grid */}
-            <div className="w-full md:w-[60%] bg-[#F8F9FA] p-8 relative flex flex-col">
-                {/* Close Button */}
-                {!isEditing && (
-                    <button 
-                        onClick={() => setSelectedItem(null)}
-                        className="absolute top-6 right-6 p-2 bg-white hover:bg-gray-50 text-gray-400 hover:text-red-500 rounded-full transition-all duration-300 z-20 border border-gray-200 hover:border-red-200 hover:rotate-90 shadow-sm"
-                    >
-                        <X size={20} />
-                    </button>
-                )}
-
+            <div className="w-full md:w-[60%] bg-[#F8F9FA] p-6 md:p-8 relative flex flex-col md:overflow-y-auto">
                 {/* Edit Actions */}
                 {canEdit && (
-                    <div className="absolute top-6 right-24 z-20 flex gap-4">
+                    <div className="absolute top-6 right-6 md:right-20 z-20 flex gap-4">
                         {isEditing ? (
                             <>
                                 <button 
@@ -945,7 +945,7 @@ export const Reports: React.FC = () => {
         </HeroSection>
 
         {/* Tab Navigation - Premium Pill Style */}
-        <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar px-1">
+        <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 custom-scrollbar px-1 -mx-4 md:mx-0 px-4 md:px-0">
             {[
                 { id: 'bumbu', label: 'Konsumsi Bumbu', icon: ChefHat },
                 { id: 'beras', label: 'Monitoring Beras', icon: ShoppingCart },
@@ -957,12 +957,12 @@ export const Reports: React.FC = () => {
                 <button
                     key={tab.id}
                     onClick={() => { setActiveTab(tab.id as any); setSearchTerm(''); }}
-                    className={`group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border
+                    className={`group flex items-center gap-2 px-4 py-2.5 md:px-6 md:py-3.5 rounded-2xl text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border flex-shrink-0
                         ${activeTab === tab.id 
                             ? 'bg-[#064E3B] text-white border-[#064E3B] shadow-lg shadow-[#064E3B]/20' 
                             : 'bg-white/60 text-gray-500 hover:bg-white hover:text-[#064E3B] border-transparent hover:border-gray-200'}`}
                 >
-                    <tab.icon size={16} className={activeTab === tab.id ? 'text-[#D4AF37]' : 'text-gray-400 group-hover:text-[#064E3B]'} />
+                    <tab.icon size={14} className={`md:w-4 md:h-4 ${activeTab === tab.id ? 'text-[#D4AF37]' : 'text-gray-400 group-hover:text-[#064E3B]'}`} />
                     {tab.label}
                 </button>
             ))}
@@ -986,7 +986,7 @@ export const Reports: React.FC = () => {
                                 placeholder={getSearchPlaceholder()} 
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#064E3B] focus:ring-4 focus:ring-[#064E3B]/5 transition-all placeholder-gray-400 text-gray-700"
+                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-4 focus:ring-[#064E3B]/5 transition-all placeholder-gray-400 text-gray-700"
                             />
                         </div>
                     </div>
@@ -995,7 +995,7 @@ export const Reports: React.FC = () => {
                     <div className="relative w-full sm:w-auto min-w-[140px]">
                         <button 
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all text-[11px] font-bold uppercase tracking-wide w-full justify-between
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all text-[11px] font-bold uppercase tracking-wide w-full justify-between h-full
                             ${isFilterOpen || filterMode !== 'newest' ? 'bg-[#064E3B] text-white border-[#064E3B] shadow-lg' : 'bg-white text-gray-500 border-gray-200 hover:border-[#064E3B]'}`}
                         >
                             <div className="flex items-center gap-2">

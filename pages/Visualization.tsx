@@ -304,7 +304,7 @@ export const Visualization: React.FC = () => {
                 subtitle="Visualisasi mendalam mengenai performa ekosistem haji, distribusi layanan, dan pergerakan harga 2026."
                 currentDate={currentDate}
             >
-                <div className="flex flex-row items-center gap-2 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                     {/* Time Filter Toggle */}
                     <div className="relative flex-1 sm:flex-none" ref={filterRef}>
                         <button 
@@ -351,10 +351,10 @@ export const Visualization: React.FC = () => {
                     </div>
 
                     {/* Status Badge */}
-                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-xl border border-white/10 h-full min-h-[44px] flex-shrink-0">
-                        <div className="text-right">
+                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-xl border border-white/10 h-full min-h-[44px] flex-shrink-0 justify-between sm:justify-start">
+                        <div className="text-right flex-1 sm:flex-none">
                             <p className="text-[10px] text-emerald-100 uppercase tracking-wide hidden sm:block">Status Data</p>
-                            <p className="text-xs md:text-sm font-bold text-white leading-none">Live<span className="hidden sm:inline"> Monitoring</span></p>
+                            <p className="text-xs md:text-sm font-bold text-white leading-none">Live<span className="inline sm:hidden"> Monitoring</span><span className="hidden sm:inline"> Monitoring</span></p>
                         </div>
                         <div className="relative w-2 h-2 flex items-center justify-center">
                             <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-75 animate-ping"></span>
