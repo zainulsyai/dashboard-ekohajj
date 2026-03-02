@@ -63,7 +63,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ title, subtitle, curre
                 </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 w-full lg:w-auto mt-1 lg:mt-0">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-end gap-3 md:gap-4 w-full lg:w-auto mt-1 lg:mt-0">
                 {children}
             </div>
         </div>

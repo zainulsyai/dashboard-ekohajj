@@ -672,13 +672,13 @@ export const Reports: React.FC = () => {
             className="absolute inset-0 bg-[#000000]/70 backdrop-blur-md transition-opacity duration-300 animate-fade-in" 
             onClick={() => !isEditing && setSelectedItem(null)}
         />
-        <div className="relative w-full max-w-5xl bg-[#F8F9FA] rounded-[2rem] shadow-2xl ring-1 ring-white/20 animate-zoom-in flex flex-col md:flex-row max-h-[90vh] border border-white/40 overflow-y-auto md:overflow-hidden">
+        <div className="relative w-full max-w-5xl bg-[#F8F9FA] rounded-2xl md:rounded-[2rem] shadow-2xl ring-1 ring-white/20 animate-zoom-in flex flex-col md:flex-row max-h-[90vh] border border-white/40 overflow-y-auto md:overflow-hidden">
             
             {/* Close Button - Global Position */}
             {!isEditing && (
                 <button 
                     onClick={() => setSelectedItem(null)}
-                    className="absolute top-4 right-4 z-50 p-2 rounded-full transition-all duration-300 border shadow-sm bg-white/10 text-white border-white/20 hover:bg-white/20 md:bg-white md:text-gray-400 md:border-gray-200 md:hover:bg-gray-50 md:hover:text-red-500"
+                    className="absolute top-5 right-5 md:top-6 md:right-6 z-50 p-2.5 rounded-full transition-all duration-300 border shadow-sm bg-black/20 backdrop-blur-md text-white border-white/20 hover:bg-black/30 md:bg-white md:text-gray-400 md:border-gray-200 md:hover:bg-gray-50 md:hover:text-red-500"
                 >
                     <X size={20} />
                 </button>
@@ -693,31 +693,29 @@ export const Reports: React.FC = () => {
             )}
 
             {/* LEFT SIDE: Header & Surveyor Info */}
-            <div className="w-full md:w-[40%] bg-gradient-to-br from-[#064E3B] via-[#053D2E] to-[#022C22] p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group shrink-0">
+            <div className="w-full md:w-[40%] bg-gradient-to-br from-[#064E3B] via-[#053D2E] to-[#022C22] p-4 md:p-8 flex flex-col justify-between relative overflow-hidden group shrink-0">
                 {/* Pattern & Decor */}
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full mix-blend-overlay opacity-20 blur-[50px] -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500 rounded-full mix-blend-overlay opacity-10 blur-[40px] translate-y-1/3 -translate-x-1/3"></div>
 
                 {/* Top Content */}
-                <div className="relative z-10 space-y-6">
-                    <div className="flex flex-wrap gap-2 items-center justify-between w-full">
-                        <div className="flex gap-2">
-                            <span className="px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit">
-                                {activeTab === 'bumbu' && <ChefHat size={12} className="text-[#D4AF37]" />}
-                                {activeTab === 'beras' && <ShoppingCart size={12} className="text-[#D4AF37]" />}
-                                {activeTab === 'rte' && <UtensilsCrossed size={12} className="text-[#D4AF37]" />}
-                                {activeTab === 'tenant' && <Store size={12} className="text-[#D4AF37]" />}
-                                {activeTab === 'ekspedisi' && <Truck size={12} className="text-[#D4AF37]" />}
-                                {activeTab === 'telco' && <Signal size={12} className="text-[#D4AF37]" />}
-                                
-                                {activeTab === 'bumbu' ? 'Konsumsi Bumbu' : 
-                                activeTab === 'beras' ? 'Monitoring Beras' : 
-                                activeTab === 'rte' ? 'RTE (Siap Saji)' : 
-                                activeTab === 'tenant' ? 'Tenant Hotel' : 
-                                activeTab === 'ekspedisi' ? 'Ekspedisi' : 'Telekomunikasi'}
-                            </span>
-                        </div>
+                <div className="relative z-10 space-y-4 md:space-y-6">
+                    <div className="flex flex-wrap gap-2 items-center w-full pr-14 md:pr-0">
+                        <span className="px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit">
+                            {activeTab === 'bumbu' && <ChefHat size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'beras' && <ShoppingCart size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'rte' && <UtensilsCrossed size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'tenant' && <Store size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'ekspedisi' && <Truck size={12} className="text-[#D4AF37]" />}
+                            {activeTab === 'telco' && <Signal size={12} className="text-[#D4AF37]" />}
+                            
+                            {activeTab === 'bumbu' ? 'Konsumsi Bumbu' : 
+                            activeTab === 'beras' ? 'Monitoring Beras' : 
+                            activeTab === 'rte' ? 'RTE (Siap Saji)' : 
+                            activeTab === 'tenant' ? 'Tenant Hotel' : 
+                            activeTab === 'ekspedisi' ? 'Ekspedisi' : 'Telekomunikasi'}
+                        </span>
                         <span className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[9px] font-mono text-emerald-200/80 tracking-widest">
                             {surveyId}
                         </span>
@@ -732,10 +730,10 @@ export const Reports: React.FC = () => {
                                     const field = activeTab === 'tenant' ? 'shopName' : activeTab === 'telco' ? 'providerName' : activeTab === 'bumbu' ? 'name' : 'companyName';
                                     setEditForm({ ...editForm, [field]: e.target.value });
                                 }}
-                                className="text-3xl md:text-4xl font-bold text-white bg-white/10 border-b border-white/20 focus:border-[#D4AF37] outline-none w-full mb-2 rounded px-2 py-1"
+                                className="text-2xl md:text-4xl font-bold text-white bg-white/10 border-b border-white/20 focus:border-[#D4AF37] outline-none w-full mb-2 rounded px-2 py-1"
                              />
                         ) : (
-                            <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight mb-2">
+                            <h2 className="text-2xl md:text-4xl font-bold text-white leading-tight drop-shadow-md tracking-tight mb-2">
                                 {selectedItem.name || selectedItem.companyName || selectedItem.shopName || selectedItem.providerName}
                             </h2>
                         )}
@@ -759,7 +757,7 @@ export const Reports: React.FC = () => {
                 </div>
 
                 {/* Bottom Content: Surveyor */}
-                <div className="relative z-10 mt-8 md:mt-0 pt-6 border-t border-white/10">
+                <div className="relative z-10 mt-6 md:mt-0 pt-6 border-t border-white/10">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B4941F] flex items-center justify-center text-[#064E3B] shadow-lg ring-2 ring-white/20">
                             <User size={24} strokeWidth={2} />
@@ -777,10 +775,10 @@ export const Reports: React.FC = () => {
             </div>
 
             {/* RIGHT SIDE: Details Grid */}
-            <div className="w-full md:w-[60%] bg-[#F8F9FA] p-6 md:p-8 relative flex flex-col md:overflow-y-auto">
+            <div className="w-full md:w-[60%] bg-[#F8F9FA] p-4 md:p-8 relative flex flex-col md:overflow-y-auto">
                 {/* Edit Actions */}
                 {canEdit && (
-                    <div className="absolute top-6 right-6 md:right-20 z-20 flex gap-4">
+                    <div className="relative md:absolute md:top-6 md:right-20 z-20 flex justify-end gap-4 mb-4 md:mb-0">
                         {isEditing ? (
                             <>
                                 <button 
@@ -810,12 +808,12 @@ export const Reports: React.FC = () => {
                 )}
 
                 <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-gray-800 mb-4 md:mb-6 flex items-center gap-2">
                         <div className="w-1 h-6 bg-[#D4AF37] rounded-full"></div>
                         Detail Data
                     </h3>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-6">
                         {activeTab === 'bumbu' && (
                             <>
                                 <DetailRow label="Perusahaan" field="companyName" value={selectedItem.companyName} icon={Building2} delay={100} />

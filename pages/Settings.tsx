@@ -259,7 +259,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                     ></div>
                     
                     {/* Landscape Card */}
-                    <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-3xl w-full mx-auto overflow-hidden flex flex-col md:flex-row min-h-[400px]">
+                    <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-3xl w-full mx-auto overflow-hidden flex flex-col md:flex-row min-h-[400px] max-h-[85vh] overflow-y-auto md:overflow-visible">
                         
                         {/* Left Side: Visual Identity */}
                         <div className="w-full md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex flex-col items-center justify-center p-6 md:p-8 text-white text-center z-10">
@@ -606,13 +606,15 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                     </div>
                 }
             >
+            <div className="flex flex-row items-center gap-2 w-full sm:w-auto">
                 <button 
                     onClick={() => handleEditProfile()}
-                    className="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs md:text-sm font-bold transition-all text-white hover:text-[#D4AF37] whitespace-nowrap shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2 group"
+                    className="flex-1 sm:flex-none w-full sm:w-auto px-3 py-2 sm:px-5 sm:py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-[10px] sm:text-xs md:text-sm font-bold transition-all text-white hover:text-[#D4AF37] whitespace-nowrap shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center sm:justify-start gap-2 group"
                 >
                     <span>Edit Profil</span>
-                    <SettingsIconLucide size={16} className="group-hover:rotate-90 transition-transform duration-500" />
+                    <SettingsIconLucide size={14} className="sm:w-4 sm:h-4 group-hover:rotate-90 transition-transform duration-500" />
                 </button>
+            </div>
             </HeroSection>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -736,7 +738,8 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                     action={<div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 shadow-sm"><UserIcon size={18}/></div>}
                     className="h-full md:col-span-2 !bg-white/80"
                 >
-                    <div className="overflow-x-auto">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-gray-100">
@@ -801,6 +804,59 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+                        {users.map((u) => (
+                            <div key={u.id} className="p-4 bg-gray-50/50 rounded-xl border border-gray-100 flex flex-col gap-3 hover:bg-white hover:shadow-sm transition-all">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <img src={u.avatar} alt={u.name} className="w-10 h-10 rounded-full shadow-sm flex-shrink-0" />
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-bold text-gray-800 truncate">{u.name}</p>
+                                            <p className="text-[10px] text-gray-500 truncate">{u.email}</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => {
+                                            if (user.role === 'Administrator EkoHajj') {
+                                                handleEditProfile(u.id);
+                                            } else {
+                                                showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
+                                            }
+                                        }}
+                                        className={`p-2 rounded-lg transition-all flex-shrink-0 ${
+                                            user.role === 'Administrator EkoHajj' 
+                                                ? 'bg-white border border-gray-200 text-gray-400 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 cursor-pointer shadow-sm' 
+                                                : 'text-gray-300 cursor-not-allowed'
+                                        }`}
+                                        title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
+                                    >
+                                        <SettingsIconLucide size={16} />
+                                    </button>
+                                </div>
+                                
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-100/50">
+                                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${
+                                        u.role === 'Administrator EkoHajj' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                        u.role === 'Eksekutif EkoHajj' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                                        u.role === 'Surveyor EkoHajj' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                        'bg-gray-100 text-gray-600 border-gray-200'
+                                    }`}>
+                                        {u.role}
+                                    </span>
+                                    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ml-auto ${
+                                        u.status === 'Active' 
+                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                                            : 'bg-gray-50 text-gray-500 border-gray-200'
+                                    }`}>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></span>
+                                        {u.status}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                     <div className="mt-4 pt-3 border-t border-gray-100 flex justify-center">
                         <button className="text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline transition-all flex items-center gap-1">

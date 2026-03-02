@@ -304,23 +304,23 @@ export const Visualization: React.FC = () => {
                 subtitle="Visualisasi mendalam mengenai performa ekosistem haji, distribusi layanan, dan pergerakan harga 2026."
                 currentDate={currentDate}
             >
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                <div className="flex flex-row items-center gap-2 w-full sm:w-auto">
                     {/* Time Filter Toggle */}
-                    <div className="relative flex-1 sm:flex-none" ref={filterRef}>
+                    <div className="relative flex-1 sm:flex-none min-w-0" ref={filterRef}>
                         <button 
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
-                            className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-xl border border-white/20 text-white font-bold text-xs md:text-sm hover:bg-white/20 transition-all w-full sm:min-w-[160px] justify-between shadow-lg shadow-black/5 hover:scale-105 hover:text-[#D4AF37]"
+                            className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl border border-white/20 text-white font-bold text-[10px] sm:text-xs md:text-sm hover:bg-white/20 transition-all w-full sm:min-w-[160px] justify-between shadow-lg shadow-black/5 hover:scale-105 hover:text-[#D4AF37]"
                         >
-                            <div className="flex items-center gap-2">
-                                <div className="p-1 bg-[#D4AF37]/20 rounded-md">
-                                    <Filter size={12} className="text-[#D4AF37]" />
+                            <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden">
+                                <div className="p-1 bg-[#D4AF37]/20 rounded-md flex-shrink-0">
+                                    <Filter size={10} className="text-[#D4AF37] sm:w-3 sm:h-3" />
                                 </div>
-                                <div className="flex flex-col items-start text-left">
-                                    <span className="text-[8px] text-emerald-100/70 font-normal uppercase tracking-wider leading-none mb-0.5">Filter</span>
-                                    <span className="leading-none truncate max-w-[80px] sm:max-w-none">{filterLabel[timeFilter]}</span>
+                                <div className="flex flex-col items-start text-left overflow-hidden">
+                                    <span className="text-[8px] text-emerald-100/70 font-normal uppercase tracking-wider leading-none mb-0.5 hidden sm:block">Filter</span>
+                                    <span className="leading-none truncate max-w-[60px] sm:max-w-none">{filterLabel[timeFilter]}</span>
                                 </div>
                             </div>
-                            <ChevronDown size={14} className={`text-emerald-200 transition-transform duration-300 ${isFilterOpen ? 'rotate-180' : ''}`} />
+                            <ChevronDown size={12} className={`text-emerald-200 transition-transform duration-300 flex-shrink-0 sm:w-3.5 sm:h-3.5 ${isFilterOpen ? 'rotate-180' : ''}`} />
                         </button>
 
                         {isFilterOpen && (
@@ -351,14 +351,14 @@ export const Visualization: React.FC = () => {
                     </div>
 
                     {/* Status Badge */}
-                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-xl border border-white/10 h-full min-h-[44px] flex-shrink-0 justify-between sm:justify-start">
-                        <div className="text-right flex-1 sm:flex-none">
+                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl border border-white/10 h-full min-h-[36px] sm:min-h-[44px] flex-shrink-0">
+                        <div className="text-right">
                             <p className="text-[10px] text-emerald-100 uppercase tracking-wide hidden sm:block">Status Data</p>
-                            <p className="text-xs md:text-sm font-bold text-white leading-none">Live<span className="inline sm:hidden"> Monitoring</span><span className="hidden sm:inline"> Monitoring</span></p>
+                            <p className="text-[10px] sm:text-xs md:text-sm font-bold text-white leading-none whitespace-nowrap">Live<span className="hidden sm:inline"> Monitoring</span></p>
                         </div>
-                        <div className="relative w-2 h-2 flex items-center justify-center">
+                        <div className="relative w-1.5 h-1.5 sm:w-2 sm:h-2 flex items-center justify-center">
                             <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-75 animate-ping"></span>
-                            <span className="relative w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span>
+                            <span className="relative w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span>
                         </div>
                     </div>
                 </div>
