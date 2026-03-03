@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../components/GlassCard';
-import { User as UserIcon, Bell, Moon, Shield, Database, LogOut, ChevronRight, Save, RefreshCw, Download, HelpCircle, Mail, Settings as SettingsIconLucide, X, Globe, Check, AlertTriangle, Camera, Eye, EyeOff, LayoutDashboard, Users, FileText, PieChart, PenTool } from 'lucide-react';
+import { User as UserIcon, Bell, Moon, Shield, Database, LogOut, ChevronRight, Save, RefreshCw, Download, HelpCircle, Mail, Settings as SettingsIconLucide, X, Globe, Check, AlertTriangle, Camera, Eye, EyeOff, LayoutDashboard, Users, FileText, PieChart, PenTool, Plus, Trash2, Search, UserPlus } from 'lucide-react';
 import { useData } from '../contexts/DataContext';
 import { useUser } from '../contexts/UserContext';
 import { Page } from '../types';
@@ -17,7 +17,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
         setExpeditionData, setTelecomData, setRiceData 
     } = useData();
     
-    const { user, updateUser, users, updateUserById } = useUser();
+    const { user, updateUser, users, updateUserById, addUser, deleteUser } = useUser();
 
     const [notifications, setNotifications] = useState(true);
     const [darkMode, setDarkMode] = useState(false);
@@ -26,6 +26,11 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isUserCardOpen, setIsUserCardOpen] = useState(false); // New User Card Modal
     const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+    const [isAllUsersModalOpen, setIsAllUsersModalOpen] = useState(false); // New All Users Modal
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // New Delete Confirmation Modal
+    const [userToDelete, setUserToDelete] = useState<string | null>(null); // Track user to delete
+    const [isAddingUser, setIsAddingUser] = useState(false); // Track if adding new user
+    const [searchQuery, setSearchQuery] = useState(''); // Search query for users
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'warning' } | null>(null);
     
     // Edit Profile State
@@ -99,21 +104,33 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
 
     useEffect(() => {
         if (isProfileModalOpen) {
-            // If editingUserId is set, find that user, otherwise use current user
-            const targetUser = editingUserId ? users.find(u => u.id === editingUserId) : user;
-            
-            if (targetUser) {
-                setEditName(targetUser.name);
-                setEditRole(targetUser.role);
-                setEditEmail(targetUser.email);
-                setEditId(targetUser.id);
-                setEditUsername(targetUser.username || ''); 
-                setEditPassword(targetUser.password || ''); // Pre-fill password
-                setEditAvatar(targetUser.avatar); // Set avatar
-                setShowPassword(false); // Reset password visibility
+            if (isAddingUser) {
+                // Reset fields for adding new user
+                setEditName('');
+                setEditRole('Surveyor EkoHajj'); // Default role
+                setEditEmail('');
+                setEditId('');
+                setEditUsername('');
+                setEditPassword('');
+                setEditAvatar(`https://ui-avatars.com/api/?name=New+User&background=random&color=fff`);
+                setShowPassword(false);
+            } else {
+                // If editingUserId is set, find that user, otherwise use current user
+                const targetUser = editingUserId ? users.find(u => u.id === editingUserId) : user;
+                
+                if (targetUser) {
+                    setEditName(targetUser.name);
+                    setEditRole(targetUser.role);
+                    setEditEmail(targetUser.email);
+                    setEditId(targetUser.id);
+                    setEditUsername(targetUser.username || ''); 
+                    setEditPassword(targetUser.password || ''); // Pre-fill password
+                    setEditAvatar(targetUser.avatar); // Set avatar
+                    setShowPassword(false); // Reset password visibility
+                }
             }
         }
-    }, [isProfileModalOpen, user, users, editingUserId]);
+    }, [isProfileModalOpen, user, users, editingUserId, isAddingUser]);
     
     const currentDate = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -146,10 +163,31 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
         }, 1500);
     };
 
+    const handleAddUser = () => {
+        setIsAddingUser(true);
+        setEditingUserId(null);
+        setIsProfileModalOpen(true);
+    };
+
     const handleEditProfile = (userId?: string) => {
+        setIsAddingUser(false);
         setEditingUserId(userId || user.id);
         setIsProfileModalOpen(true);
         setIsUserCardOpen(false); // Close card if open
+    };
+
+    const handleDeleteUser = (userId: string) => {
+        setUserToDelete(userId);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDeleteUser = () => {
+        if (userToDelete) {
+            deleteUser(userToDelete);
+            setIsDeleteModalOpen(false);
+            setUserToDelete(null);
+            showToast("Pengguna berhasil dihapus", 'success');
+        }
     };
 
     const handleSaveProfile = () => {
@@ -170,28 +208,60 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
              return;
         }
 
-        const updates: any = {
-            name: editName,
-            role: editRole,
-            email: editEmail,
-            id: editId,
-            username: editUsername,
-            avatar: editAvatar // Include avatar update
-        };
-
-        if (editPassword) {
-            updates.password = editPassword;
+        // 3. Required Fields
+        if (!editName || !editUsername || !editRole) {
+            showToast("Semua field wajib diisi", 'warning');
+            return;
         }
 
-        if (editingUserId) {
-            updateUserById(editingUserId, updates);
+        if (isAddingUser) {
+            // Check if ID or Username already exists
+            if (users.some(u => u.id === editId)) {
+                showToast("ID Panitia sudah digunakan", 'warning');
+                return;
+            }
+            if (users.some(u => u.username?.toLowerCase() === editUsername.toLowerCase())) {
+                showToast("Username sudah digunakan", 'warning');
+                return;
+            }
+
+            const newUser = {
+                id: editId,
+                name: editName,
+                role: editRole,
+                email: editEmail,
+                username: editUsername,
+                password: editPassword || '123456', // Default password if empty
+                avatar: editAvatar,
+                status: 'Active' as const
+            };
+            addUser(newUser);
+            showToast("Pengguna baru berhasil ditambahkan", 'success');
         } else {
-            updateUser(updates);
+            const updates: any = {
+                name: editName,
+                role: editRole,
+                email: editEmail,
+                id: editId,
+                username: editUsername,
+                avatar: editAvatar // Include avatar update
+            };
+    
+            if (editPassword) {
+                updates.password = editPassword;
+            }
+    
+            if (editingUserId) {
+                updateUserById(editingUserId, updates);
+            } else {
+                updateUser(updates);
+            }
+            showToast("Profil berhasil diperbarui", 'success');
         }
         
         setIsProfileModalOpen(false);
         setEditingUserId(null);
-        showToast("Profil berhasil diperbarui", 'success');
+        setIsAddingUser(false);
     };
 
     const handleSettingChange = (setting: string, value: boolean) => {
@@ -735,7 +805,21 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                 <GlassCard 
                     title="Manajemen Akun" 
                     subtitle="Daftar Pengguna Terdaftar"
-                    action={<div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 shadow-sm"><UserIcon size={18}/></div>}
+                    action={
+                        <div className="flex items-center gap-2">
+                            {user.role === 'Administrator EkoHajj' && (
+                                <button 
+                                    onClick={handleAddUser}
+                                    className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md transition-all flex items-center gap-1"
+                                    title="Tambah Pengguna Baru"
+                                >
+                                    <UserPlus size={16} />
+                                    <span className="text-xs font-bold hidden sm:inline">Tambah</span>
+                                </button>
+                            )}
+                            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 shadow-sm"><UserIcon size={18}/></div>
+                        </div>
+                    }
                     className="h-full md:col-span-2 !bg-white/80"
                 >
                     {/* Desktop Table View */}
@@ -750,7 +834,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
-                                {users.map((u) => (
+                                {users.slice(0, 5).map((u) => ( // Limit to 5 for preview
                                     <tr key={u.id} className="group hover:bg-gray-50/50 transition-colors">
                                         <td className="py-3 px-4">
                                             <div className="flex items-center gap-3">
@@ -782,23 +866,34 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                             </span>
                                         </td>
                                         <td className="py-3 px-4 text-right">
-                                            <button 
-                                                onClick={() => {
-                                                    if (user.role === 'Administrator EkoHajj') {
-                                                        handleEditProfile(u.id);
-                                                    } else {
-                                                        showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
-                                                    }
-                                                }}
-                                                className={`p-1.5 rounded-lg transition-all ${
-                                                    user.role === 'Administrator EkoHajj' 
-                                                        ? 'text-gray-400 hover:text-blue-600 hover:bg-blue-50 cursor-pointer' 
-                                                        : 'text-gray-300 cursor-not-allowed'
-                                                }`}
-                                                title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
-                                            >
-                                                <SettingsIconLucide size={14} />
-                                            </button>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button 
+                                                    onClick={() => {
+                                                        if (user.role === 'Administrator EkoHajj') {
+                                                            handleEditProfile(u.id);
+                                                        } else {
+                                                            showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
+                                                        }
+                                                    }}
+                                                    className={`p-1.5 rounded-lg transition-all ${
+                                                        user.role === 'Administrator EkoHajj' 
+                                                            ? 'text-gray-400 hover:text-blue-600 hover:bg-blue-50 cursor-pointer' 
+                                                            : 'text-gray-300 cursor-not-allowed'
+                                                    }`}
+                                                    title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
+                                                >
+                                                    <SettingsIconLucide size={14} />
+                                                </button>
+                                                {user.role === 'Administrator EkoHajj' && u.id !== user.id && (
+                                                    <button 
+                                                        onClick={() => handleDeleteUser(u.id)}
+                                                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                                                        title="Hapus User"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -808,7 +903,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
 
                     {/* Mobile Card View */}
                     <div className="md:hidden space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-                        {users.map((u) => (
+                        {users.slice(0, 5).map((u) => (
                             <div key={u.id} className="p-4 bg-gray-50/50 rounded-xl border border-gray-100 flex flex-col gap-3 hover:bg-white hover:shadow-sm transition-all">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-center gap-3 min-w-0">
@@ -818,23 +913,34 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                             <p className="text-[10px] text-gray-500 truncate">{u.email}</p>
                                         </div>
                                     </div>
-                                    <button 
-                                        onClick={() => {
-                                            if (user.role === 'Administrator EkoHajj') {
-                                                handleEditProfile(u.id);
-                                            } else {
-                                                showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
-                                            }
-                                        }}
-                                        className={`p-2 rounded-lg transition-all flex-shrink-0 ${
-                                            user.role === 'Administrator EkoHajj' 
-                                                ? 'bg-white border border-gray-200 text-gray-400 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 cursor-pointer shadow-sm' 
-                                                : 'text-gray-300 cursor-not-allowed'
-                                        }`}
-                                        title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
-                                    >
-                                        <SettingsIconLucide size={16} />
-                                    </button>
+                                    <div className="flex items-center gap-1">
+                                        <button 
+                                            onClick={() => {
+                                                if (user.role === 'Administrator EkoHajj') {
+                                                    handleEditProfile(u.id);
+                                                } else {
+                                                    showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
+                                                }
+                                            }}
+                                            className={`p-2 rounded-lg transition-all flex-shrink-0 ${
+                                                user.role === 'Administrator EkoHajj' 
+                                                    ? 'bg-white border border-gray-200 text-gray-400 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 cursor-pointer shadow-sm' 
+                                                    : 'text-gray-300 cursor-not-allowed'
+                                            }`}
+                                            title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
+                                        >
+                                            <SettingsIconLucide size={16} />
+                                        </button>
+                                        {user.role === 'Administrator EkoHajj' && u.id !== user.id && (
+                                            <button 
+                                                onClick={() => handleDeleteUser(u.id)}
+                                                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all flex-shrink-0"
+                                                title="Hapus User"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 
                                 <div className="flex items-center gap-2 pt-2 border-t border-gray-100/50">
@@ -859,14 +965,45 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                         ))}
                     </div>
                     <div className="mt-4 pt-3 border-t border-gray-100 flex justify-center">
-                        <button className="text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline transition-all flex items-center gap-1">
+                        <button 
+                            onClick={() => setIsAllUsersModalOpen(true)}
+                            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline transition-all flex items-center gap-1"
+                        >
                             Lihat Semua Pengguna <ChevronRight size={12} />
                         </button>
                     </div>
                 </GlassCard>
             </div>
 
-            {/* Access Rights Card - Full Width */}
+            {/* Delete Confirmation Modal */}
+            {isDeleteModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="absolute inset-0" onClick={() => setIsDeleteModalOpen(false)}></div>
+                    <div className="relative bg-white p-6 rounded-2xl shadow-2xl animate-zoom-in max-w-sm w-full mx-auto border border-red-100">
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto text-red-500">
+                            <Trash2 size={24} />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 text-center mb-2">Hapus Pengguna?</h3>
+                        <p className="text-sm text-gray-500 text-center mb-6">
+                            Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.
+                        </p>
+                        <div className="flex gap-3">
+                            <button 
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors text-sm"
+                            >
+                                Batal
+                            </button>
+                            <button 
+                                onClick={confirmDeleteUser}
+                                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition-colors text-sm shadow-md shadow-red-200"
+                            >
+                                Ya, Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <GlassCard 
                 title="Hak Akses & Perizinan" 
                 subtitle="Kontrol penuh atas akses menu dan fungsionalitas untuk setiap role pengguna"
@@ -1014,6 +1151,135 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                 <p className="text-[10px] text-gray-400 font-mono tracking-wider opacity-60 hover:opacity-100 transition-opacity cursor-default">Version 1.0.2 (Build 2026.02.21)</p>
             </div>
             </div>
+
+            {/* All Users Modal */}
+            {isAllUsersModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="absolute inset-0" onClick={() => setIsAllUsersModalOpen(false)}></div>
+                    <div className="relative bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl animate-zoom-in flex flex-col overflow-hidden border border-gray-100">
+                        {/* Header */}
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Semua Pengguna</h2>
+                                <p className="text-sm text-gray-500">Kelola semua akun pengguna terdaftar</p>
+                            </div>
+                            <button 
+                                onClick={() => setIsAllUsersModalOpen(false)}
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                            >
+                                <X size={20} className="text-gray-500" />
+                            </button>
+                        </div>
+
+                        {/* Toolbar */}
+                        <div className="p-4 bg-gray-50/50 border-b border-gray-100 flex flex-col sm:flex-row gap-3 justify-between items-center">
+                            <div className="relative w-full sm:w-auto sm:flex-1 max-w-md">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                <input 
+                                    type="text" 
+                                    placeholder="Cari pengguna..." 
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                                />
+                            </div>
+                            {user.role === 'Administrator EkoHajj' && (
+                                <button 
+                                    onClick={() => {
+                                        setIsAllUsersModalOpen(false);
+                                        handleAddUser();
+                                    }}
+                                    className="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors text-sm flex items-center justify-center gap-2 shadow-sm"
+                                >
+                                    <UserPlus size={18} />
+                                    Tambah Pengguna
+                                </button>
+                            )}
+                        </div>
+
+                        {/* User Grid */}
+                        <div className="flex-1 overflow-y-auto p-6 bg-gray-50/30">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {users.filter(u => 
+                                    u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    u.role.toLowerCase().includes(searchQuery.toLowerCase())
+                                ).map((u) => (
+                                    <div key={u.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-gradient-to-l from-white via-white to-transparent pl-8">
+                                            {user.role === 'Administrator EkoHajj' && (
+                                                <>
+                                                    <button 
+                                                        onClick={() => {
+                                                            setIsAllUsersModalOpen(false);
+                                                            handleEditProfile(u.id);
+                                                        }}
+                                                        className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                                        title="Edit"
+                                                    >
+                                                        <SettingsIconLucide size={14} />
+                                                    </button>
+                                                    {u.id !== user.id && (
+                                                        <button 
+                                                            onClick={() => handleDeleteUser(u.id)}
+                                                            className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                                            title="Hapus"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <img src={u.avatar} alt={u.name} className="w-12 h-12 rounded-full shadow-sm border-2 border-white" />
+                                            <div className="min-w-0">
+                                                <h3 className="font-bold text-gray-900 truncate text-sm">{u.name}</h3>
+                                                <p className="text-xs text-gray-500 truncate">{u.email}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-xs">
+                                                <span className="text-gray-500">Role</span>
+                                                <span className={`px-2 py-0.5 rounded-md font-medium ${
+                                                    u.role === 'Administrator EkoHajj' ? 'bg-purple-50 text-purple-700' :
+                                                    u.role === 'Eksekutif EkoHajj' ? 'bg-amber-50 text-amber-700' :
+                                                    u.role === 'Surveyor EkoHajj' ? 'bg-blue-50 text-blue-700' :
+                                                    'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                    {u.role.split(' ')[0]}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-xs">
+                                                <span className="text-gray-500">Status</span>
+                                                <span className={`flex items-center gap-1.5 ${u.status === 'Active' ? 'text-emerald-600' : 'text-gray-400'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-500' : 'bg-gray-400'}`}></span>
+                                                    {u.status}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-xs">
+                                                <span className="text-gray-500">ID</span>
+                                                <span className="font-mono text-gray-700">{u.id}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            {users.filter(u => 
+                                u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                u.email.toLowerCase().includes(searchQuery.toLowerCase())
+                            ).length === 0 && (
+                                <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+                                    <Search size={48} className="mb-4 opacity-20" />
+                                    <p>Tidak ada pengguna ditemukan</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };

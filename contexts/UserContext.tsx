@@ -19,6 +19,8 @@ interface UserContextType {
     logout: () => void;
     updateUser: (newData: Partial<User>) => void;
     updateUserById: (id: string, newData: Partial<User>) => void;
+    addUser: (user: User) => void;
+    deleteUser: (id: string) => void;
 }
 
 const USERS = [
@@ -135,8 +137,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }));
     };
 
+    const addUser = (newUser: User) => {
+        setUsersList(prevList => [...prevList, newUser]);
+    };
+
+    const deleteUser = (id: string) => {
+        setUsersList(prevList => prevList.filter(u => u.id !== id));
+    };
+
     return (
-        <UserContext.Provider value={{ user, users: usersList, login, logout, updateUser, updateUserById }}>
+        <UserContext.Provider value={{ user, users: usersList, login, logout, updateUser, updateUserById, addUser, deleteUser }}>
             {children}
         </UserContext.Provider>
     );
