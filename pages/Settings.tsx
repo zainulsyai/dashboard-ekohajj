@@ -444,10 +444,10 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                         className="absolute inset-0" 
                         onClick={() => setIsProfileModalOpen(false)}
                     ></div>
-                    <div className="relative bg-white rounded-3xl shadow-2xl animate-zoom-in max-w-4xl w-full mx-auto overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+                    <div className="relative bg-white rounded-2xl md:rounded-3xl shadow-2xl animate-zoom-in max-w-4xl w-full mx-auto overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:min-h-[500px]">
                         
-                        {/* Left Side: Visual Identity (Editable) */}
-                        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex flex-col items-center justify-center p-8 text-white text-center z-10">
+                        {/* Left Side: Visual Identity (Hidden on Mobile/Tablet Portrait) */}
+                        <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex-col items-center justify-center p-8 text-white text-center z-10 shrink-0">
                             {/* Decorative Patterns */}
                             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
@@ -472,7 +472,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                     {/* Hidden file input */}
                                     <input 
                                         type="file" 
-                                        id="avatar-upload" 
+                                        id="avatar-upload-desktop" 
                                         accept="image/png, image/jpeg" 
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                                         onChange={(e) => {
@@ -504,83 +504,118 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                             
                             {/* Identity Info Preview */}
                             <div className="relative z-10 space-y-2 w-full">
-                                <h2 className="text-2xl font-bold leading-tight text-white drop-shadow-md">{editName || user.name}</h2>
+                                <h2 className="text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-1">{editName || user.name}</h2>
                                 <p className="text-xs text-emerald-100 font-medium">Klik foto untuk mengubah</p>
                             </div>
                         </div>
 
                         {/* Right Side: Edit Form */}
-                        <div className="w-full md:w-7/12 bg-white p-8 relative flex flex-col h-full overflow-y-auto max-h-[90vh] md:max-h-none">
+                        <div className="w-full md:w-7/12 bg-white relative flex flex-col h-full overflow-hidden">
                             {/* Close Button */}
                             <button 
                                 onClick={() => setIsProfileModalOpen(false)}
-                                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all z-20"
+                                className="absolute top-3 right-3 md:top-5 md:right-5 p-1.5 md:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all z-20"
                             >
-                                <X size={20} />
+                                <X size={18} className="md:w-5 md:h-5" />
                             </button>
 
-                            {/* Header */}
-                            <div className="mb-6 border-b border-gray-100 pb-4">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <div className="p-1.5 bg-emerald-50 rounded-lg text-emerald-600">
-                                        <SettingsIconLucide size={18} />
+                            {/* Header (Fixed) */}
+                            <div className="px-4 pt-4 pb-3 md:px-8 md:pt-8 md:pb-6 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white z-10">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-0.5 md:mb-1">
+                                        <div className={`p-1 md:p-1.5 rounded-lg ${isAddingUser ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                                            {isAddingUser ? (
+                                                <UserPlus size={14} className="md:w-[18px] md:h-[18px]" />
+                                            ) : (
+                                                <SettingsIconLucide size={14} className="md:w-[18px] md:h-[18px]" />
+                                            )}
+                                        </div>
+                                        <h3 className="text-sm md:text-lg font-bold text-gray-800">
+                                            {isAddingUser ? 'Tambah Pengguna' : 'Edit Profil'}
+                                        </h3>
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-800">Edit Profil</h3>
+                                    <p className="text-gray-500 text-[10px] md:text-xs hidden sm:block">
+                                        {isAddingUser ? 'Tambahkan pengguna baru ke sistem.' : 'Perbarui informasi akun Anda.'}
+                                    </p>
                                 </div>
-                                <p className="text-gray-500 text-xs">Perbarui informasi akun Anda.</p>
+                                
+                                {/* Mobile Avatar Edit (Visible only on small screens) */}
+                                <div className="md:hidden relative group mr-6">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-100 relative bg-gray-50">
+                                        <img src={editAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                                        <input 
+                                            type="file" 
+                                            accept="image/png, image/jpeg" 
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    const file = e.target.files[0];
+                                                    const reader = new FileReader();
+                                                    reader.onloadend = () => {
+                                                        setEditAvatar(reader.result as string);
+                                                        showToast("Foto profil berhasil dipilih", 'success');
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="absolute -bottom-1 -right-1 bg-emerald-600 rounded-full p-0.5 border border-white pointer-events-none">
+                                        <Camera size={8} className="text-white" />
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Form Grid */}
-                            <div className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                            {/* Form Grid (Scrollable) */}
+                            <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3 md:gap-5">
+                                <div className="col-span-1 sm:col-span-2 md:col-span-1">
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
                                     <input 
                                         type="text" 
                                         value={editName}
                                         onChange={(e) => setEditName(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Username</label>
-                                        <input 
-                                            type="text" 
-                                            value={editUsername}
-                                            onChange={(e) => setEditUsername(e.target.value)}
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">ID Panitia</label>
-                                        <input 
-                                            type="text" 
-                                            value={editId}
-                                            onChange={(e) => {
-                                                if (/^\d*$/.test(e.target.value)) setEditId(e.target.value);
-                                            }}
-                                            minLength={7}
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
-                                        />
-                                    </div>
+                                <div>
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Username</label>
+                                    <input 
+                                        type="text" 
+                                        value={editUsername}
+                                        onChange={(e) => setEditUsername(e.target.value)}
+                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">ID Panitia</label>
+                                    <input 
+                                        type="text" 
+                                        value={editId}
+                                        onChange={(e) => {
+                                            if (/^\d*$/.test(e.target.value)) setEditId(e.target.value);
+                                        }}
+                                        minLength={7}
+                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-mono font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                    />
                                 </div>
 
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Role / Jabatan</label>
+                                <div className="col-span-1 sm:col-span-2 md:col-span-1">
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Role / Jabatan</label>
                                     {user.role === 'Administrator EkoHajj' ? (
                                         <div className="relative">
                                             <select
                                                 value={editRole}
                                                 onChange={(e) => setEditRole(e.target.value)}
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 appearance-none"
+                                                className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 appearance-none"
                                             >
                                                 <option value="Administrator EkoHajj">Administrator EkoHajj</option>
                                                 <option value="Eksekutif EkoHajj">Eksekutif EkoHajj</option>
                                                 <option value="Surveyor EkoHajj">Surveyor EkoHajj</option>
                                             </select>
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                                                <ChevronRight size={16} className="rotate-90" />
+                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                                <ChevronRight size={14} className="md:w-4 md:h-4 rotate-90" />
                                             </div>
                                         </div>
                                     ) : (
@@ -588,55 +623,70 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                             type="text" 
                                             value={editRole}
                                             readOnly
-                                            className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed"
+                                            className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-xs md:text-sm font-medium text-gray-500 cursor-not-allowed"
                                         />
                                     )}
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
                                     <input 
                                         type="email" 
                                         value={editEmail}
                                         onChange={(e) => setEditEmail(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Password</label>
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Password</label>
                                     <div className="relative">
                                         <input 
                                             type={showPassword ? "text" : "password"}
                                             value={editPassword}
                                             onChange={(e) => setEditPassword(e.target.value)}
-                                            placeholder="Ubah Password (Opsional)"
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 pr-10"
+                                            placeholder="Ubah Password"
+                                            className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 pr-8 md:pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                         >
-                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            {showPassword ? <EyeOff size={14} className="md:w-[18px] md:h-[18px]" /> : <Eye size={14} className="md:w-[18px] md:h-[18px]" />}
                                         </button>
                                     </div>
                                 </div>
+                                </div>
                             </div>
 
-                            <div className="mt-6 flex gap-3 pt-4 border-t border-gray-100">
+                            {/* Footer (Fixed) */}
+                            <div className="px-4 py-3 md:px-8 md:py-6 border-t border-gray-100 flex gap-3 shrink-0 bg-white z-10">
                                 <button 
                                     onClick={() => setIsProfileModalOpen(false)}
-                                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors text-sm"
+                                    className="flex-1 px-3 py-2 md:px-4 md:py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors text-xs md:text-sm"
                                 >
                                     Batal
                                 </button>
                                 <button 
                                     onClick={handleSaveProfile}
-                                    className="flex-1 px-4 py-2.5 bg-[#064E3B] hover:bg-[#053d2e] text-white rounded-xl font-bold transition-colors text-sm shadow-lg shadow-[#064E3B]/20 flex items-center justify-center gap-2"
+                                    className={`flex-1 px-3 py-2 md:px-4 md:py-2.5 text-white rounded-xl font-bold transition-colors text-xs md:text-sm shadow-lg flex items-center justify-center gap-2 ${
+                                        isAddingUser 
+                                            ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20' 
+                                            : 'bg-[#064E3B] hover:bg-[#053d2e] shadow-[#064E3B]/20'
+                                    }`}
                                 >
-                                    <Save size={18} />
-                                    Simpan
+                                    {isAddingUser ? (
+                                        <>
+                                            <UserPlus size={14} className="md:w-[18px] md:h-[18px]" />
+                                            <span>Tambah User</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save size={14} className="md:w-[18px] md:h-[18px]" />
+                                            <span>Simpan Perubahan</span>
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>
@@ -810,20 +860,20 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                             {user.role === 'Administrator EkoHajj' && (
                                 <button 
                                     onClick={handleAddUser}
-                                    className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md transition-all flex items-center gap-1"
+                                    className="px-2 py-1.5 sm:px-3 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md transition-all flex items-center gap-1.5 active:scale-95"
                                     title="Tambah Pengguna Baru"
                                 >
-                                    <UserPlus size={16} />
-                                    <span className="text-xs font-bold hidden sm:inline">Tambah</span>
+                                    <UserPlus size={14} className="sm:w-4 sm:h-4" />
+                                    <span className="text-[10px] sm:text-xs font-bold">Tambah</span>
                                 </button>
                             )}
-                            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 shadow-sm"><UserIcon size={18}/></div>
+                            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 shadow-sm hidden sm:block"><UserIcon size={18}/></div>
                         </div>
                     }
                     className="h-full md:col-span-2 !bg-white/80"
                 >
-                    {/* Desktop Table View */}
-                    <div className="hidden md:block overflow-x-auto">
+                    {/* Desktop Table View (Visible on Large Screens) */}
+                    <div className="hidden lg:block overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-gray-100">
@@ -901,19 +951,29 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                         </table>
                     </div>
 
-                    {/* Mobile Card View */}
-                    <div className="md:hidden space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+                    {/* Mobile & Tablet Card View (Visible on Small & Medium Screens) */}
+                    <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
                         {users.slice(0, 5).map((u) => (
-                            <div key={u.id} className="p-4 bg-gray-50/50 rounded-xl border border-gray-100 flex flex-col gap-3 hover:bg-white hover:shadow-sm transition-all">
+                            <div key={u.id} className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2 transition-all hover:shadow-md">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-center gap-3 min-w-0">
-                                        <img src={u.avatar} alt={u.name} className="w-10 h-10 rounded-full shadow-sm flex-shrink-0" />
+                                        <img src={u.avatar} alt={u.name} className="w-10 h-10 rounded-full shadow-sm flex-shrink-0 border border-gray-100" />
                                         <div className="min-w-0">
-                                            <p className="text-sm font-bold text-gray-800 truncate">{u.name}</p>
+                                            <p className="text-xs font-bold text-gray-900 truncate">{u.name}</p>
                                             <p className="text-[10px] text-gray-500 truncate">{u.email}</p>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide border ${
+                                                    u.role === 'Administrator EkoHajj' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                                    u.role === 'Eksekutif EkoHajj' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                                                    u.role === 'Surveyor EkoHajj' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                    'bg-gray-100 text-gray-600 border-gray-200'
+                                                }`}>
+                                                    {u.role.split(' ')[0]}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex flex-col gap-1.5">
                                         <button 
                                             onClick={() => {
                                                 if (user.role === 'Administrator EkoHajj') {
@@ -922,54 +982,48 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                                     showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
                                                 }
                                             }}
-                                            className={`p-2 rounded-lg transition-all flex-shrink-0 ${
+                                            className={`p-1.5 rounded-lg transition-all flex-shrink-0 ${
                                                 user.role === 'Administrator EkoHajj' 
-                                                    ? 'bg-white border border-gray-200 text-gray-400 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 cursor-pointer shadow-sm' 
+                                                    ? 'bg-gray-50 border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 cursor-pointer shadow-sm' 
                                                     : 'text-gray-300 cursor-not-allowed'
                                             }`}
                                             title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
                                         >
-                                            <SettingsIconLucide size={16} />
+                                            <SettingsIconLucide size={14} />
                                         </button>
                                         {user.role === 'Administrator EkoHajj' && u.id !== user.id && (
                                             <button 
                                                 onClick={() => handleDeleteUser(u.id)}
-                                                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all flex-shrink-0"
+                                                className="p-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all flex-shrink-0"
                                                 title="Hapus User"
                                             >
-                                                <Trash2 size={16} />
+                                                <Trash2 size={14} />
                                             </button>
                                         )}
                                     </div>
                                 </div>
                                 
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-100/50">
-                                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${
-                                        u.role === 'Administrator EkoHajj' ? 'bg-purple-50 text-purple-700 border-purple-100' :
-                                        u.role === 'Eksekutif EkoHajj' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                                        u.role === 'Surveyor EkoHajj' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                        'bg-gray-100 text-gray-600 border-gray-200'
-                                    }`}>
-                                        {u.role}
-                                    </span>
-                                    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ml-auto ${
+                                <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+                                    <span className="text-[9px] text-gray-400 font-mono">ID: {u.id}</span>
+                                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide border ${
                                         u.status === 'Active' 
                                             ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
                                             : 'bg-gray-50 text-gray-500 border-gray-200'
                                     }`}>
-                                        <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></span>
+                                        <span className={`w-1 h-1 rounded-full ${u.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></span>
                                         {u.status}
                                     </span>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <div className="mt-4 pt-3 border-t border-gray-100 flex justify-center">
+                    <div className="mt-4 pt-3 border-t border-gray-100">
                         <button 
                             onClick={() => setIsAllUsersModalOpen(true)}
-                            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline transition-all flex items-center gap-1"
+                            className="w-full md:w-auto mx-auto px-4 py-2 md:py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 group"
                         >
-                            Lihat Semua Pengguna <ChevronRight size={12} />
+                            <span>Lihat Semua Pengguna</span>
+                            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                     </div>
                 </GlassCard>

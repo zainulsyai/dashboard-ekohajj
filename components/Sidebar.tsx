@@ -17,15 +17,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
 
   const handleNavigate = (page: Page) => {
     onNavigate(page);
-    // Close sidebar on mobile after navigation
-    if (window.innerWidth < 768 && setIsOpen) {
+    // Close sidebar on mobile/tablet after navigation
+    if (window.innerWidth < 1024 && setIsOpen) {
         setIsOpen(false);
     }
   };
 
   return (
     <aside className={`fixed left-0 top-0 h-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-30 
-       ${isOpen ? 'translate-x-0 w-64 md:w-72' : '-translate-x-full md:translate-x-0 md:w-24'} 
+       ${isOpen ? 'translate-x-0 w-64 lg:w-72' : '-translate-x-full lg:translate-x-0 lg:w-24'} 
        bg-[#064E3B] shadow-[10px_0_30px_rgba(0,0,0,0.15)] border-r border-white/5 flex flex-col overflow-hidden will-change-[width,transform]`}>
        
       {/* Decorative Background Pattern */}
@@ -33,20 +33,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#10B981] opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
 
       {/* Brand Header */}
-      <div className={`h-20 md:h-24 flex items-center ${isOpen ? 'justify-start px-6' : 'justify-center px-0'} border-b border-white/10 relative z-10 bg-gradient-to-b from-[#064E3B] to-transparent overflow-hidden`}>
+      <div className={`h-20 lg:h-24 flex items-center ${isOpen ? 'justify-start px-6' : 'justify-center px-0'} border-b border-white/10 relative z-10 bg-gradient-to-b from-[#064E3B] to-transparent overflow-hidden`}>
          <div className={`flex items-center gap-4 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${!isOpen ? '' : ''}`}>
             {/* Logo */}
             <Logo size="md" />
             
             {/* Title */}
             <div className={`leading-tight transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10 absolute left-20 pointer-events-none'}`}>
-                <h1 className="font-bold text-lg md:text-xl tracking-tight text-white drop-shadow-md font-playfair leading-tight whitespace-nowrap">Dirjen PEE</h1>
-                <span className="text-[9px] md:text-[10px] text-[#D4AF37] tracking-normal uppercase font-semibold block mt-0.5 leading-tight w-40 md:w-48 whitespace-normal">Kementerian Haji dan Umrah RI</span>
+                <h1 className="font-bold text-lg lg:text-xl tracking-tight text-white drop-shadow-md font-playfair leading-tight whitespace-nowrap">Dirjen PEE</h1>
+                <span className="text-[9px] lg:text-[10px] text-[#D4AF37] tracking-normal uppercase font-semibold block mt-0.5 leading-tight w-40 lg:w-48 whitespace-normal">Kementerian Haji dan Umrah RI</span>
             </div>
          </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto custom-scrollbar py-6 md:py-8 px-3 md:px-4 space-y-2 relative z-10 overflow-x-hidden">
+      <nav className="flex-1 overflow-y-auto custom-scrollbar py-6 lg:py-8 px-3 lg:px-4 space-y-2 relative z-10 overflow-x-hidden">
         {/* Beranda */}
         <MenuItem 
             icon={LayoutDashboard} 
@@ -97,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
       <div className="p-4 border-t border-white/5 bg-[#042f24] relative z-10">
         <button
             onClick={onLogout}
-            className={`w-full flex items-center ${isOpen ? 'gap-3 md:gap-3.5' : ''} p-3 md:p-3.5 rounded-xl text-red-300/80 hover:bg-red-500/10 hover:text-red-200 transition-all duration-300 group border border-transparent hover:border-red-500/20 overflow-hidden whitespace-nowrap ${!isOpen && 'justify-center'}`}
+            className={`w-full flex items-center ${isOpen ? 'gap-3 lg:gap-3.5' : ''} p-3 lg:p-3.5 rounded-xl text-red-300/80 hover:bg-red-500/10 hover:text-red-200 transition-all duration-300 group border border-transparent hover:border-red-500/20 overflow-hidden whitespace-nowrap ${!isOpen && 'justify-center'}`}
         >
             <div className="relative flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
                 <LogOut size={20} strokeWidth={2} />
@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
 const MenuItem = ({ icon: Icon, label, isActive, onClick, isOpen }: any) => (
     <button
         onClick={onClick}
-        className={`w-full flex items-center ${isOpen ? 'gap-3 md:gap-3.5' : ''} p-3 md:p-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden group whitespace-nowrap active:scale-95
+        className={`w-full flex items-center ${isOpen ? 'gap-3 lg:gap-3.5' : ''} p-3 lg:p-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden group whitespace-nowrap active:scale-95
             ${isActive 
                 ? 'bg-gradient-to-r from-[#ffffff]/10 to-transparent text-white border border-white/10 shadow-lg' 
                 : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent hover:shadow-md'
