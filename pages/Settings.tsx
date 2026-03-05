@@ -444,19 +444,19 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                         className="absolute inset-0" 
                         onClick={() => setIsProfileModalOpen(false)}
                     ></div>
-                    <div className="relative bg-white rounded-2xl md:rounded-3xl shadow-2xl animate-zoom-in max-w-4xl w-full mx-auto overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:min-h-[500px]">
+                    <div className="relative bg-white rounded-2xl lg:rounded-3xl shadow-2xl animate-zoom-in max-w-4xl landscape:max-w-5xl w-full mx-auto overflow-hidden flex flex-col landscape:flex-row lg:flex-row max-h-[95dvh] landscape:max-h-screen landscape:h-auto lg:h-auto lg:min-h-[500px]">
                         
-                        {/* Left Side: Visual Identity (Hidden on Mobile/Tablet Portrait) */}
-                        <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex-col items-center justify-center p-8 text-white text-center z-10 shrink-0">
+                        {/* Left Side: Visual Identity (Visible on all screens) */}
+                        <div className="flex w-full landscape:w-4/12 lg:w-5/12 bg-gradient-to-br from-[#064E3B] to-[#047857] relative flex-col items-center justify-center p-6 landscape:p-4 lg:p-8 text-white text-center z-10 shrink-0">
                             {/* Decorative Patterns */}
                             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
                             <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#D4AF37]/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
                             
                             {/* Profile Image Edit */}
-                            <div className="relative z-10 mb-5 group">
+                            <div className="relative z-10 mb-4 landscape:mb-3 lg:mb-5 group">
                                 <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:blur-2xl transition-all opacity-50"></div>
-                                <div className="w-40 h-40 rounded-full p-1.5 bg-white/20 backdrop-blur-md shadow-2xl relative group cursor-pointer">
+                                <div className="w-28 h-28 landscape:w-28 landscape:h-28 lg:w-40 lg:h-40 rounded-full p-1.5 bg-white/20 backdrop-blur-md shadow-2xl relative group cursor-pointer">
                                     <div className="w-full h-full rounded-full overflow-hidden border-[4px] border-white bg-white relative">
                                         <img 
                                             src={editAvatar} 
@@ -464,8 +464,8 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                             className="w-full h-full object-cover"
                                         />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col gap-2">
-                                            <Camera size={24} className="text-white" />
-                                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">Ubah Foto</span>
+                                            <Camera size={24} className="text-white landscape:w-5 landscape:h-5 lg:w-6 lg:h-6" />
+                                            <span className="text-[10px] font-bold text-white uppercase tracking-wider landscape:block">Ubah Foto</span>
                                         </div>
                                     </div>
                                     
@@ -495,53 +495,53 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                         setEditAvatar(defaultAvatar);
                                         showToast("Foto profil direset", 'info');
                                     }}
-                                    className="absolute -bottom-2 -right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-lg transition-transform hover:scale-110 z-30" 
+                                    className="absolute -bottom-2 -right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-lg transition-transform hover:scale-110 z-30 landscape:p-1.5 landscape:-bottom-1 landscape:-right-1" 
                                     title="Hapus Foto"
                                 >
-                                    <X size={14} />
+                                    <X size={14} className="landscape:w-3.5 landscape:h-3.5" />
                                 </button>
                             </div>
                             
                             {/* Identity Info Preview */}
-                            <div className="relative z-10 space-y-2 w-full">
-                                <h2 className="text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-1">{editName || user.name}</h2>
-                                <p className="text-xs text-emerald-100 font-medium">Klik foto untuk mengubah</p>
+                            <div className="relative z-10 space-y-2 landscape:space-y-1 w-full">
+                                <h2 className="text-2xl landscape:text-lg lg:text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-1">{editName || user.name}</h2>
+                                <p className="text-xs text-emerald-100 font-medium landscape:text-xs">Klik foto untuk mengubah</p>
                             </div>
                         </div>
 
                         {/* Right Side: Edit Form */}
-                        <div className="w-full md:w-7/12 bg-white relative flex flex-col h-full overflow-hidden">
+                        <div className="w-full landscape:w-8/12 lg:w-7/12 bg-white relative flex flex-col h-full overflow-hidden">
                             {/* Close Button */}
                             <button 
                                 onClick={() => setIsProfileModalOpen(false)}
-                                className="absolute top-3 right-3 md:top-5 md:right-5 p-1.5 md:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all z-20"
+                                className="absolute top-3 right-3 lg:top-5 lg:right-5 p-1.5 lg:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all z-20 bg-white/80 backdrop-blur-sm landscape:top-3 landscape:right-3 landscape:p-1.5"
                             >
-                                <X size={18} className="md:w-5 md:h-5" />
+                                <X size={18} className="lg:w-5 lg:h-5 landscape:w-5 landscape:h-5" />
                             </button>
 
                             {/* Header (Fixed) */}
-                            <div className="px-4 pt-4 pb-3 md:px-8 md:pt-8 md:pb-6 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white z-10">
-                                <div>
-                                    <div className="flex items-center gap-2 mb-0.5 md:mb-1">
-                                        <div className={`p-1 md:p-1.5 rounded-lg ${isAddingUser ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                            <div className="px-5 py-4 landscape:py-3 landscape:px-5 lg:px-8 lg:pt-8 lg:pb-6 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white z-10">
+                                <div className="pr-8">
+                                    <div className="flex items-center gap-2 mb-0.5 lg:mb-1 landscape:mb-0.5">
+                                        <div className={`p-1.5 rounded-lg ${isAddingUser ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'} landscape:p-1.5`}>
                                             {isAddingUser ? (
-                                                <UserPlus size={14} className="md:w-[18px] md:h-[18px]" />
+                                                <UserPlus size={16} className="lg:w-[18px] lg:h-[18px] landscape:w-4 landscape:h-4" />
                                             ) : (
-                                                <SettingsIconLucide size={14} className="md:w-[18px] md:h-[18px]" />
+                                                <SettingsIconLucide size={16} className="lg:w-[18px] lg:h-[18px] landscape:w-4 landscape:h-4" />
                                             )}
                                         </div>
-                                        <h3 className="text-sm md:text-lg font-bold text-gray-800">
+                                        <h3 className="text-base lg:text-lg font-bold text-gray-800 landscape:text-base">
                                             {isAddingUser ? 'Tambah Pengguna' : 'Edit Profil'}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-500 text-[10px] md:text-xs hidden sm:block">
+                                    <p className="text-gray-500 text-[10px] lg:text-xs hidden sm:block landscape:block landscape:text-[10px]">
                                         {isAddingUser ? 'Tambahkan pengguna baru ke sistem.' : 'Perbarui informasi akun Anda.'}
                                     </p>
                                 </div>
                                 
-                                {/* Mobile Avatar Edit (Visible only on small screens) */}
-                                <div className="md:hidden relative group mr-6">
-                                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-100 relative bg-gray-50">
+                                {/* Mobile Avatar Edit (Hidden) */}
+                                <div className="hidden relative group mr-8">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-100 relative bg-gray-50 shadow-sm">
                                         <img src={editAvatar} alt="Avatar" className="w-full h-full object-cover" />
                                         <input 
                                             type="file" 
@@ -560,62 +560,64 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                             }}
                                         />
                                     </div>
-                                    <div className="absolute -bottom-1 -right-1 bg-emerald-600 rounded-full p-0.5 border border-white pointer-events-none">
-                                        <Camera size={8} className="text-white" />
+                                    <div className="absolute -bottom-1 -right-1 bg-emerald-600 rounded-full p-1 border border-white pointer-events-none shadow-sm">
+                                        <Camera size={10} className="text-white" />
                                     </div>
                                 </div>
                             </div>
 
                             {/* Form Grid (Scrollable) */}
-                            <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3 md:gap-5">
-                                <div className="col-span-1 sm:col-span-2 md:col-span-1">
-                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                            <div className="flex-1 overflow-y-auto p-5 landscape:p-5 lg:p-8 custom-scrollbar">
+                                <div className="grid grid-cols-1 landscape:grid-cols-2 gap-4 md:gap-5 landscape:gap-x-5 landscape:gap-y-3">
+                                <div className="landscape:col-span-1">
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 landscape:mb-1 landscape:text-[10px]">Nama Lengkap</label>
                                     <input 
                                         type="text" 
                                         value={editName}
                                         onChange={(e) => setEditName(e.target.value)}
-                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Username</label>
-                                    <input 
-                                        type="text" 
-                                        value={editUsername}
-                                        onChange={(e) => setEditUsername(e.target.value)}
-                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">ID Panitia</label>
-                                    <input 
-                                        type="text" 
-                                        value={editId}
-                                        onChange={(e) => {
-                                            if (/^\d*$/.test(e.target.value)) setEditId(e.target.value);
-                                        }}
-                                        minLength={7}
-                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-mono font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
-                                    />
+                                <div className="grid grid-cols-2 gap-3 md:gap-5 landscape:contents">
+                                    <div className="landscape:col-span-1">
+                                        <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 landscape:mb-1 landscape:text-[10px]">Username</label>
+                                        <input 
+                                            type="text" 
+                                            value={editUsername}
+                                            onChange={(e) => setEditUsername(e.target.value)}
+                                            className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        />
+                                    </div>
+                                    <div className="landscape:col-span-1">
+                                        <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 landscape:mb-1 landscape:text-[10px]">ID Panitia</label>
+                                        <input 
+                                            type="text" 
+                                            value={editId}
+                                            onChange={(e) => {
+                                                if (/^\d*$/.test(e.target.value)) setEditId(e.target.value);
+                                            }}
+                                            minLength={7}
+                                            className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-mono font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        />
+                                    </div>
                                 </div>
 
-                                <div className="col-span-1 sm:col-span-2 md:col-span-1">
-                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Role / Jabatan</label>
+                                <div className="landscape:col-span-1">
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 landscape:mb-1 landscape:text-[10px]">Role / Jabatan</label>
                                     {user.role === 'Administrator EkoHajj' ? (
                                         <div className="relative">
                                             <select
                                                 value={editRole}
                                                 onChange={(e) => setEditRole(e.target.value)}
-                                                className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 appearance-none"
+                                                className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 appearance-none"
                                             >
                                                 <option value="Administrator EkoHajj">Administrator EkoHajj</option>
                                                 <option value="Eksekutif EkoHajj">Eksekutif EkoHajj</option>
                                                 <option value="Surveyor EkoHajj">Surveyor EkoHajj</option>
                                             </select>
                                             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                                                <ChevronRight size={14} className="md:w-4 md:h-4 rotate-90" />
+                                                <ChevronRight size={14} className="md:w-4 md:h-4 rotate-90 landscape:w-4 landscape:h-4" />
                                             </div>
                                         </div>
                                     ) : (
@@ -623,37 +625,37 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                             type="text" 
                                             value={editRole}
                                             readOnly
-                                            className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-xs md:text-sm font-medium text-gray-500 cursor-not-allowed"
+                                            className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-100 border border-gray-200 rounded-xl text-xs md:text-sm font-medium text-gray-500 cursor-not-allowed"
                                         />
                                     )}
                                 </div>
 
-                                <div>
-                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
+                                <div className="landscape:col-span-1">
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 landscape:mb-1 landscape:text-[10px]">Email</label>
                                     <input 
                                         type="email" 
                                         value={editEmail}
                                         onChange={(e) => setEditEmail(e.target.value)}
-                                        className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
+                                        className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Password</label>
+                                <div className="landscape:col-span-1">
+                                    <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 landscape:mb-1 landscape:text-[10px]">Password</label>
                                     <div className="relative">
                                         <input 
                                             type={showPassword ? "text" : "password"}
                                             value={editPassword}
                                             onChange={(e) => setEditPassword(e.target.value)}
                                             placeholder="Ubah Password"
-                                            className="w-full px-3 py-2 sm:py-1.5 md:px-4 md:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 pr-8 md:pr-10"
+                                            className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800 pr-8 md:pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
                                             className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                         >
-                                            {showPassword ? <EyeOff size={14} className="md:w-[18px] md:h-[18px]" /> : <Eye size={14} className="md:w-[18px] md:h-[18px]" />}
+                                            {showPassword ? <EyeOff size={14} className="md:w-[18px] md:h-[18px] landscape:w-4 landscape:h-4" /> : <Eye size={14} className="md:w-[18px] md:h-[18px] landscape:w-4 landscape:h-4" />}
                                         </button>
                                     </div>
                                 </div>
@@ -661,16 +663,16 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                             </div>
 
                             {/* Footer (Fixed) */}
-                            <div className="px-4 py-3 md:px-8 md:py-6 border-t border-gray-100 flex gap-3 shrink-0 bg-white z-10">
+                            <div className="px-4 py-3 landscape:py-3 landscape:px-5 md:px-8 md:py-6 border-t border-gray-100 flex gap-3 shrink-0 bg-white z-10">
                                 <button 
                                     onClick={() => setIsProfileModalOpen(false)}
-                                    className="flex-1 px-3 py-2 md:px-4 md:py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors text-xs md:text-sm"
+                                    className="flex-1 px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors text-xs md:text-sm"
                                 >
                                     Batal
                                 </button>
                                 <button 
                                     onClick={handleSaveProfile}
-                                    className={`flex-1 px-3 py-2 md:px-4 md:py-2.5 text-white rounded-xl font-bold transition-colors text-xs md:text-sm shadow-lg flex items-center justify-center gap-2 ${
+                                    className={`flex-1 px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 text-white rounded-xl font-bold transition-colors text-xs md:text-sm shadow-lg flex items-center justify-center gap-2 ${
                                         isAddingUser 
                                             ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20' 
                                             : 'bg-[#064E3B] hover:bg-[#053d2e] shadow-[#064E3B]/20'
@@ -678,12 +680,12 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                 >
                                     {isAddingUser ? (
                                         <>
-                                            <UserPlus size={14} className="md:w-[18px] md:h-[18px]" />
+                                            <UserPlus size={14} className="md:w-[18px] md:h-[18px] landscape:w-4 landscape:h-4" />
                                             <span>Tambah User</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Save size={14} className="md:w-[18px] md:h-[18px]" />
+                                            <Save size={14} className="md:w-[18px] md:h-[18px] landscape:w-4 landscape:h-4" />
                                             <span>Simpan Perubahan</span>
                                         </>
                                     )}
