@@ -16,6 +16,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigate, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const { user } = useUser();
   const { darkMode, setDarkMode, isEnglish, setIsEnglish } = useData();
 
@@ -81,38 +82,23 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
           {/* Right: Actions */}
           <div className="flex items-center gap-3 lg:gap-6">
             
-            {/* Language Toggle */}
-            <button 
-                onClick={() => setIsEnglish(!isEnglish)}
-                className={`relative p-2 lg:p-2.5 ${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-white/50 hover:bg-white text-gray-500'} rounded-xl border border-transparent hover:border-gray-200 hover:text-[#064E3B] transition-all shadow-sm group`}
-                title={isEnglish ? "Switch to Indonesian" : "Switch to English"}
-            >
-                <Globe size={20} />
-                <span className={`absolute -bottom-1 -right-1 text-[8px] font-bold ${darkMode ? 'bg-gray-800 border-gray-600 text-emerald-400' : 'bg-white border-gray-100 text-[#064E3B]'} px-1 rounded-md border shadow-sm`}>
-                    {isEnglish ? 'EN' : 'ID'}
-                </span>
-            </button>
-
-            {/* Dark Mode Toggle */}
-            <button 
-                onClick={() => setDarkMode(!darkMode)}
-                className={`relative p-2 lg:p-2.5 ${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-yellow-400' : 'bg-white/50 hover:bg-white text-gray-500'} rounded-xl border border-transparent hover:border-gray-200 hover:text-[#064E3B] transition-all shadow-sm`}
-                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            {/* Language Toggle - Moved to Profile Menu */}
+            {/* Dark Mode Toggle - Moved to Profile Menu */}
 
             <button className={`relative p-2 lg:p-2.5 ${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-white/50 hover:bg-white text-gray-500'} rounded-xl border border-transparent hover:border-gray-200 hover:text-[#064E3B] transition-all shadow-sm`}>
               <Bell size={20} />
               <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
             
-            <div className={`flex items-center gap-3 pl-3 lg:pl-4 border-l ${darkMode ? 'border-gray-700' : 'border-gray-200/60'}`}>
+            <div className={`relative flex items-center gap-3 pl-3 lg:pl-4 border-l ${darkMode ? 'border-gray-700' : 'border-gray-200/60'}`}>
                 <div className="text-right hidden lg:flex flex-col justify-center h-full">
                     <p className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-800'} leading-tight`}>{user.name}</p>
                     <p className="text-[10px] text-[#D4AF37] font-bold tracking-wider uppercase leading-tight">{user.role}</p>
                 </div>
-                <div className="w-9 h-9 lg:w-11 lg:h-11 rounded-full bg-gradient-to-br from-[#064E3B] to-[#042f24] p-0.5 shadow-lg shadow-[#064E3B]/20 cursor-pointer hover:scale-105 transition-transform">
+                <div 
+                    className="w-9 h-9 lg:w-11 lg:h-11 rounded-full bg-gradient-to-br from-[#064E3B] to-[#042f24] p-0.5 shadow-lg shadow-[#064E3B]/20 cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                >
                     <div className="w-full h-full rounded-full border-2 border-white/20 overflow-hidden">
                         <img 
                             src={user.avatar} 
@@ -121,6 +107,68 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                         />
                     </div>
                 </div>
+
+                {/* Profile Dropdown Menu */}
+                {profileMenuOpen && (
+                    <>
+                        {/* Overlay - Transparent, Fixed, Full Screen to close menu */}
+                        <div 
+                            className="fixed inset-0 z-30 bg-transparent cursor-default"
+                            onClick={() => setProfileMenuOpen(false)}
+                        ></div>
+
+                        <div className={`absolute top-full right-0 mt-2 w-64 rounded-2xl shadow-xl border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} p-2 z-40 animate-fade-in-up origin-top-right`}>
+                        {/* Mobile User Info */}
+                        <div className={`lg:hidden p-3 mb-2 rounded-xl ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'} border ${darkMode ? 'border-gray-600' : 'border-gray-100'}`}>
+                            <p className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{user.name}</p>
+                            <p className="text-xs text-[#D4AF37] font-bold uppercase">{user.role}</p>
+                        </div>
+
+                        {/* Toggles - Visible on All Screens */}
+                        <div className="space-y-1 mb-2">
+                             <button 
+                                onClick={() => { setIsEnglish(!isEnglish); }}
+                                className={`w-full flex items-center justify-between p-3 rounded-xl transition-colors ${darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-50 text-gray-600'}`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Globe size={18} />
+                                    <span className="text-sm font-medium">Bahasa</span>
+                                </div>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${darkMode ? 'bg-gray-900 text-emerald-400' : 'bg-gray-200 text-[#064E3B]'}`}>
+                                    {isEnglish ? 'English' : 'Indonesia'}
+                                </span>
+                            </button>
+
+                            <button 
+                                onClick={() => { setDarkMode(!darkMode); }}
+                                className={`w-full flex items-center justify-between p-3 rounded-xl transition-colors ${darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-50 text-gray-600'}`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                                    <span className="text-sm font-medium">Mode Tampilan</span>
+                                </div>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${darkMode ? 'bg-gray-900 text-yellow-400' : 'bg-gray-200 text-gray-600'}`}>
+                                    {darkMode ? 'Gelap' : 'Terang'}
+                                </span>
+                            </button>
+                        </div>
+                        
+                        {/* Divider */}
+                        <div className={`h-px w-full my-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}></div>
+
+                        {/* Logout */}
+                        <button 
+                            onClick={() => { setProfileMenuOpen(false); onLogout(); }}
+                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors text-red-500 hover:bg-red-50 hover:text-red-600`}
+                        >
+                            {/* We can import LogOut icon if needed, but for now just text or reuse an icon if available. 
+                                Layout.tsx doesn't import LogOut. I'll add it to imports.
+                            */}
+                            <span className="text-sm font-bold">Keluar Aplikasi</span>
+                        </button>
+                    </div>
+                    </>
+                )}
             </div>
           </div>
         </header>
