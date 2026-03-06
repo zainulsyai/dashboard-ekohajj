@@ -20,6 +20,8 @@ interface DataContextType {
   telecomActive: Record<number, boolean>;
   setTelecomActive: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
   isLoading: boolean;
+  logoUrl: string;
+  setLogoUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -81,6 +83,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [telecomData, setTelecomData] = useState<TelecomRecord[]>([]);
   const [riceData, setRiceData] = useState<RiceRecord[]>([]);
   const [telecomActive, setTelecomActive] = useState<Record<number, boolean>>({});
+  const [logoUrl, setLogoUrl] = useState<string>("https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Lambang_Kementerian_Agama.png/723px-Lambang_Kementerian_Agama.png");
 
     useEffect(() => {
     const timer = setTimeout(() => {
@@ -415,7 +418,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       telecomData, setTelecomData,
       riceData, setRiceData,
       telecomActive, setTelecomActive,
-      isLoading
+      isLoading,
+      logoUrl, setLogoUrl
     }}>
       {children}
     </DataContext.Provider>

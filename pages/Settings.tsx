@@ -14,7 +14,8 @@ interface SettingsProps {
 export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
     const { 
         setBumbuMakkah, setBumbuMadinah, setRteData, setTenantData, 
-        setExpeditionData, setTelecomData, setRiceData 
+        setExpeditionData, setTelecomData, setRiceData,
+        logoUrl, setLogoUrl
     } = useData();
     
     const { user, updateUser, users, updateUserById, addUser, deleteUser } = useUser();
@@ -802,6 +803,81 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                             </div>
                         </div>
                     </GlassCard>
+
+                    {/* Logo Settings (Admin Only) */}
+                    {user.role === 'Administrator EkoHajj' && (
+                        <GlassCard 
+                            title="Pengaturan Logo" 
+                            subtitle="Ubah logo aplikasi (Login & Sidebar)"
+                            action={<div className="p-2 bg-purple-50 rounded-lg text-purple-700 shadow-sm"><Camera size={18}/></div>}
+                            className="!bg-white/80"
+                        >
+                            <div className="p-4 space-y-4">
+                                <div className="flex flex-col sm:flex-row items-center gap-6">
+                                    {/* Logo Preview */}
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center p-2 relative group overflow-hidden">
+                                            <img 
+                                                src={logoUrl} 
+                                                alt="App Logo" 
+                                                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <p className="text-white text-[10px] font-bold uppercase tracking-wider">Preview</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Logo Saat Ini</p>
+                                    </div>
+
+                                    {/* Upload Controls */}
+                                    <div className="flex-1 w-full space-y-3">
+                                        <div className="relative">
+                                            <input 
+                                                type="file" 
+                                                id="logo-upload" 
+                                                accept="image/png, image/jpeg, image/svg+xml"
+                                                className="hidden"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        const file = e.target.files[0];
+                                                        const reader = new FileReader();
+                                                        reader.onloadend = () => {
+                                                            setLogoUrl(reader.result as string);
+                                                            showToast("Logo aplikasi berhasil diperbarui", 'success');
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                }}
+                                            />
+                                            <label 
+                                                htmlFor="logo-upload"
+                                                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl border border-indigo-200 border-dashed cursor-pointer transition-all group"
+                                            >
+                                                <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover:scale-110 transition-transform">
+                                                    <Camera size={16} />
+                                                </div>
+                                                <span className="text-sm font-bold">Upload Logo Baru</span>
+                                            </label>
+                                            <p className="text-[10px] text-gray-500 mt-1.5 text-center sm:text-left">
+                                                Format: PNG, JPG, SVG. Maksimal 2MB. Disarankan rasio 1:1 atau transparan.
+                                            </p>
+                                        </div>
+
+                                        <button 
+                                            onClick={() => {
+                                                setLogoUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Lambang_Kementerian_Agama.png/723px-Lambang_Kementerian_Agama.png");
+                                                showToast("Logo dikembalikan ke default", 'info');
+                                            }}
+                                            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-medium text-xs transition-colors"
+                                        >
+                                            <RefreshCw size={14} />
+                                            <span>Reset ke Default</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </GlassCard>
+                    )}
 
                     {/* Access Rights Card - MOVED OUT */}
                 </div>
