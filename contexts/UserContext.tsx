@@ -81,18 +81,18 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         password: u.password
     })));
 
-    const login = (username: string, password: string): boolean => {
-        const foundUser = USERS.find(u => {
+    const login = (usernameInput: string, password: string): boolean => {
+        const foundUser = usersList.find(u => {
             // Check if input matches username (case-insensitive) OR id
-            const isUsernameMatch = u.username.toLowerCase() === username.toLowerCase();
-            const isIdMatch = u.id === username;
+            const isUsernameMatch = u.username ? u.username.toLowerCase() === usernameInput.toLowerCase() : false;
+            const isIdMatch = u.id === usernameInput;
             
             if (!isUsernameMatch && !isIdMatch) return false;
 
             // Special password handling based on role/user
             if (u.role === Role.ADMINISTRATOR || u.role === Role.EXECUTIVE) {
                 // Case-insensitive password for Admin and Executive
-                return u.password.toLowerCase() === password.toLowerCase();
+                return u.password ? u.password.toLowerCase() === password.toLowerCase() : false;
             }
             
             // Strict password check for others (Surveyor)

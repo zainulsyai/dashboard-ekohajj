@@ -130,7 +130,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 <form onSubmit={handleSubmit} className="space-y-5">
                     
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">Username / ID</label>
+                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">Username / ID Panitia</label>
                         <div className="relative group">
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#064E3B] transition-colors">
                                 <User size={18} className="md:w-[18px] md:h-[18px]" />
@@ -139,7 +139,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                                 type="text" 
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Masukkan Username"
+                                placeholder="Masukkan Username / ID Panitia"
                                 className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-10 pr-4 text-sm font-medium text-gray-800 placeholder-gray-400 focus:border-[#064E3B] focus:ring-4 focus:ring-[#064E3B]/10 outline-none transition-all shadow-sm group-hover:border-gray-300"
                             />
                         </div>
