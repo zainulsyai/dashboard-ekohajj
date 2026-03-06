@@ -505,7 +505,9 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                             
                             {/* Identity Info Preview */}
                             <div className="relative z-10 space-y-2 landscape:space-y-1 w-full">
-                                <h2 className="text-2xl landscape:text-lg lg:text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-1">{editName || user.name}</h2>
+                                <h2 className="text-2xl landscape:text-lg lg:text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-1">
+                                    {editName || (isAddingUser ? "Nama Lengkap User" : user.name)}
+                                </h2>
                                 <p className="text-xs text-emerald-100 font-medium landscape:text-xs">Klik foto untuk mengubah</p>
                             </div>
                         </div>
@@ -575,7 +577,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                     <input 
                                         type="text" 
                                         value={editName}
-                                        onChange={(e) => setEditName(e.target.value)}
+                                        onChange={(e) => setEditName(e.target.value.replace(/\b\w/g, (char) => char.toUpperCase()))}
                                         className="w-full px-3 py-2 md:px-4 md:py-2.5 landscape:py-2 landscape:text-sm bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm font-medium focus:outline-none focus:border-[#064E3B] focus:ring-2 focus:ring-[#064E3B]/10 transition-all text-gray-800"
                                     />
                                 </div>
@@ -929,13 +931,13 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                     </div>
                 </GlassCard>
 
-                {/* Manajemen Akun */}
-                <GlassCard 
-                    title="Manajemen Akun" 
-                    subtitle="Daftar Pengguna Terdaftar"
-                    action={
-                        <div className="flex items-center gap-2">
-                            {user.role === 'Administrator EkoHajj' && (
+                {/* Manajemen Akun (Admin Only) */}
+                {user.role === 'Administrator EkoHajj' && (
+                    <GlassCard 
+                        title="Manajemen Akun" 
+                        subtitle="Daftar Pengguna Terdaftar"
+                        action={
+                            <div className="flex items-center gap-2">
                                 <button 
                                     onClick={handleAddUser}
                                     className="px-2 py-1.5 sm:px-3 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md transition-all flex items-center gap-1.5 active:scale-95"
@@ -944,167 +946,147 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                                     <UserPlus size={14} className="sm:w-4 sm:h-4" />
                                     <span className="text-[10px] sm:text-xs font-bold">Tambah</span>
                                 </button>
-                            )}
-                            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 shadow-sm hidden sm:block"><UserIcon size={18}/></div>
-                        </div>
-                    }
-                    className="h-full md:col-span-2 !bg-white/80"
-                >
-                    {/* Desktop Table View (Visible on Large Screens) */}
-                    <div className="hidden lg:block overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-gray-100">
-                                    <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Pengguna</th>
-                                    <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
-                                    <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-50">
-                                {users.slice(0, 5).map((u) => ( // Limit to 5 for preview
-                                    <tr key={u.id} className="group hover:bg-gray-50/50 transition-colors">
-                                        <td className="py-3 px-4">
-                                            <div className="flex items-center gap-3">
-                                                <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full shadow-sm" />
-                                                <div>
-                                                    <p className="text-sm font-bold text-gray-800">{u.name}</p>
-                                                    <p className="text-[10px] text-gray-500">{u.email}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${
-                                                u.role === 'Administrator EkoHajj' ? 'bg-purple-50 text-purple-700 border-purple-100' :
-                                                u.role === 'Eksekutif EkoHajj' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                                                u.role === 'Surveyor EkoHajj' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                                'bg-gray-100 text-gray-600 border-gray-200'
-                                            }`}>
-                                                {u.role}
-                                            </span>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${
-                                                u.status === 'Active' 
-                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
-                                                    : 'bg-gray-50 text-gray-500 border-gray-200'
-                                            }`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></span>
-                                                {u.status}
-                                            </span>
-                                        </td>
-                                        <td className="py-3 px-4 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button 
-                                                    onClick={() => {
-                                                        if (user.role === 'Administrator EkoHajj') {
-                                                            handleEditProfile(u.id);
-                                                        } else {
-                                                            showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
-                                                        }
-                                                    }}
-                                                    className={`p-1.5 rounded-lg transition-all ${
-                                                        user.role === 'Administrator EkoHajj' 
-                                                            ? 'text-gray-400 hover:text-blue-600 hover:bg-blue-50 cursor-pointer' 
-                                                            : 'text-gray-300 cursor-not-allowed'
-                                                    }`}
-                                                    title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
-                                                >
-                                                    <SettingsIconLucide size={14} />
-                                                </button>
-                                                {user.role === 'Administrator EkoHajj' && u.id !== user.id && (
-                                                    <button 
-                                                        onClick={() => handleDeleteUser(u.id)}
-                                                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"
-                                                        title="Hapus User"
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
+                                <div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 shadow-sm hidden sm:block"><UserIcon size={18}/></div>
+                            </div>
+                        }
+                        className="h-full md:col-span-2 !bg-white/80"
+                    >
+                        {/* Desktop Table View (Visible on Large Screens) */}
+                        <div className="hidden lg:block overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-gray-100">
+                                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Pengguna</th>
+                                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
+                                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Mobile & Tablet Card View (Visible on Small & Medium Screens) */}
-                    <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-                        {users.slice(0, 5).map((u) => (
-                            <div key={u.id} className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2 transition-all hover:shadow-md">
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <img src={u.avatar} alt={u.name} className="w-10 h-10 rounded-full shadow-sm flex-shrink-0 border border-gray-100" />
-                                        <div className="min-w-0">
-                                            <p className="text-xs font-bold text-gray-900 truncate">{u.name}</p>
-                                            <p className="text-[10px] text-gray-500 truncate">{u.email}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide border ${
+                                </thead>
+                                <tbody className="divide-y divide-gray-50">
+                                    {users.slice(0, 5).map((u) => ( // Limit to 5 for preview
+                                        <tr key={u.id} className="group hover:bg-gray-50/50 transition-colors">
+                                            <td className="py-3 px-4">
+                                                <div className="flex items-center gap-3">
+                                                    <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full shadow-sm" />
+                                                    <div>
+                                                        <p className="text-sm font-bold text-gray-800">{u.name}</p>
+                                                        <p className="text-[10px] text-gray-500">{u.email}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${
                                                     u.role === 'Administrator EkoHajj' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                                                     u.role === 'Eksekutif EkoHajj' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                                                     u.role === 'Surveyor EkoHajj' ? 'bg-blue-50 text-blue-700 border-blue-100' :
                                                     'bg-gray-100 text-gray-600 border-gray-200'
                                                 }`}>
-                                                    {u.role.split(' ')[0]}
+                                                    {u.role}
                                                 </span>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${
+                                                    u.status === 'Active' 
+                                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                                                        : 'bg-gray-50 text-gray-500 border-gray-200'
+                                                }`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></span>
+                                                    {u.status}
+                                                </span>
+                                            </td>
+                                            <td className="py-3 px-4 text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button 
+                                                        onClick={() => handleEditProfile(u.id)}
+                                                        className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 cursor-pointer transition-all"
+                                                        title="Edit User"
+                                                    >
+                                                        <SettingsIconLucide size={14} />
+                                                    </button>
+                                                    {u.id !== user.id && (
+                                                        <button 
+                                                            onClick={() => handleDeleteUser(u.id)}
+                                                            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                                                            title="Hapus User"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile & Tablet Card View (Visible on Small & Medium Screens) */}
+                        <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+                            {users.slice(0, 5).map((u) => (
+                                <div key={u.id} className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2 transition-all hover:shadow-md">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <img src={u.avatar} alt={u.name} className="w-10 h-10 rounded-full shadow-sm flex-shrink-0 border border-gray-100" />
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-bold text-gray-900 truncate">{u.name}</p>
+                                                <p className="text-[10px] text-gray-500 truncate">{u.email}</p>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide border ${
+                                                        u.role === 'Administrator EkoHajj' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                                        u.role === 'Eksekutif EkoHajj' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                                                        u.role === 'Surveyor EkoHajj' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                        'bg-gray-100 text-gray-600 border-gray-200'
+                                                    }`}>
+                                                        {u.role.split(' ')[0]}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="flex flex-col gap-1.5">
-                                        <button 
-                                            onClick={() => {
-                                                if (user.role === 'Administrator EkoHajj') {
-                                                    handleEditProfile(u.id);
-                                                } else {
-                                                    showToast("Hanya Administrator yang dapat mengedit pengguna lain", 'warning');
-                                                }
-                                            }}
-                                            className={`p-1.5 rounded-lg transition-all flex-shrink-0 ${
-                                                user.role === 'Administrator EkoHajj' 
-                                                    ? 'bg-gray-50 border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 cursor-pointer shadow-sm' 
-                                                    : 'text-gray-300 cursor-not-allowed'
-                                            }`}
-                                            title={user.role === 'Administrator EkoHajj' ? "Edit User" : "Akses Dibatasi"}
-                                        >
-                                            <SettingsIconLucide size={14} />
-                                        </button>
-                                        {user.role === 'Administrator EkoHajj' && u.id !== user.id && (
+                                        <div className="flex flex-col gap-1.5">
                                             <button 
-                                                onClick={() => handleDeleteUser(u.id)}
-                                                className="p-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all flex-shrink-0"
-                                                title="Hapus User"
+                                                onClick={() => handleEditProfile(u.id)}
+                                                className="p-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 cursor-pointer shadow-sm transition-all flex-shrink-0"
+                                                title="Edit User"
                                             >
-                                                <Trash2 size={14} />
+                                                <SettingsIconLucide size={14} />
                                             </button>
-                                        )}
+                                            {u.id !== user.id && (
+                                                <button 
+                                                    onClick={() => handleDeleteUser(u.id)}
+                                                    className="p-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all flex-shrink-0"
+                                                    title="Hapus User"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+                                        <span className="text-[9px] text-gray-400 font-mono">ID: {u.id}</span>
+                                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide border ${
+                                            u.status === 'Active' 
+                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                                                : 'bg-gray-50 text-gray-500 border-gray-200'
+                                        }`}>
+                                            <span className={`w-1 h-1 rounded-full ${u.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></span>
+                                            {u.status}
+                                        </span>
                                     </div>
                                 </div>
-                                
-                                <div className="flex items-center justify-between pt-2 border-t border-gray-50">
-                                    <span className="text-[9px] text-gray-400 font-mono">ID: {u.id}</span>
-                                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide border ${
-                                        u.status === 'Active' 
-                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
-                                            : 'bg-gray-50 text-gray-500 border-gray-200'
-                                    }`}>
-                                        <span className={`w-1 h-1 rounded-full ${u.status === 'Active' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></span>
-                                        {u.status}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="mt-4 pt-3 border-t border-gray-100">
-                        <button 
-                            onClick={() => setIsAllUsersModalOpen(true)}
-                            className="w-full md:w-auto mx-auto px-4 py-2 md:py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 group"
-                        >
-                            <span>Lihat Semua Pengguna</span>
-                            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                        </button>
-                    </div>
-                </GlassCard>
+                            ))}
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-gray-100">
+                            <button 
+                                onClick={() => setIsAllUsersModalOpen(true)}
+                                className="w-full md:w-auto mx-auto px-4 py-2 md:py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 group"
+                            >
+                                <span>Lihat Semua Pengguna</span>
+                                <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </div>
+                    </GlassCard>
+                )}
             </div>
 
             {/* Delete Confirmation Modal */}
@@ -1136,138 +1118,83 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
                     </div>
                 </div>
             )}
-            <GlassCard 
-                title="Hak Akses & Perizinan" 
-                subtitle="Kontrol penuh atas akses menu dan fungsionalitas untuk setiap role pengguna"
-                action={<div className="p-2 bg-purple-50 rounded-lg text-purple-700 shadow-sm"><Shield size={18}/></div>}
-                className="!bg-white/80 mt-6"
-            >
-                <div className="space-y-6">
-                    {user.role === 'Administrator EkoHajj' ? (
-                        <>
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-purple-50/50 rounded-xl border border-purple-100">
-                                <div>
-                                    <h4 className="text-sm font-bold text-gray-800">Konfigurasi Role</h4>
-                                    <p className="text-xs text-gray-500">Pilih role untuk mengatur izin akses</p>
-                                </div>
-                                <div className="relative w-full md:w-64">
-                                    <select
-                                        value={selectedRole}
-                                        onChange={(e) => setSelectedRole(e.target.value)}
-                                        className="w-full pl-4 pr-10 py-2.5 bg-white border border-purple-200 rounded-xl text-sm font-bold text-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-200 appearance-none cursor-pointer shadow-sm hover:border-purple-300 transition-all"
-                                    >
-                                        <option value="Administrator EkoHajj">Administrator EkoHajj</option>
-                                        <option value="Eksekutif EkoHajj">Eksekutif EkoHajj</option>
-                                        <option value="Surveyor EkoHajj">Surveyor EkoHajj</option>
-                                    </select>
-                                    <ChevronRight size={16} className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-purple-500 pointer-events-none" />
-                                </div>
+            {/* Access Rights (Admin Only) */}
+            {user.role === 'Administrator EkoHajj' && (
+                <GlassCard 
+                    title="Hak Akses & Perizinan" 
+                    subtitle="Kontrol penuh atas akses menu dan fungsionalitas untuk setiap role pengguna"
+                    action={<div className="p-2 bg-purple-50 rounded-lg text-purple-700 shadow-sm"><Shield size={18}/></div>}
+                    className="!bg-white/80 mt-6"
+                >
+                    <div className="space-y-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-purple-50/50 rounded-xl border border-purple-100">
+                            <div>
+                                <h4 className="text-sm font-bold text-gray-800">Konfigurasi Role</h4>
+                                <p className="text-xs text-gray-500">Pilih role untuk mengatur izin akses</p>
                             </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {['Menu Halaman', 'Fungsionalitas'].map((category) => (
-                                    <div key={category} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-                                        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-                                            <div className={`p-1.5 rounded-lg ${category === 'Menu Halaman' ? 'bg-blue-50 text-blue-600' : 'bg-indigo-50 text-indigo-600'}`}>
-                                                {category === 'Menu Halaman' ? <LayoutDashboard size={16} /> : <Database size={16} />}
-                                            </div>
-                                            <h5 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{category}</h5>
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {Object.entries(permissionConfig)
-                                                .filter(([_, config]) => config.category === category)
-                                                .map(([key, config]) => {
-                                                    const Icon = config.icon;
-                                                    const isEnabled = rolePermissions[selectedRole][key];
-                                                    return (
-                                                        <div 
-                                                            key={key} 
-                                                            onClick={() => handlePermissionToggle(selectedRole, key)}
-                                                            className={`flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer group ${isEnabled ? 'bg-white border-purple-200 shadow-md shadow-purple-50' : 'bg-gray-50 border-transparent hover:bg-gray-100'}`}
-                                                        >
-                                                            <div className={`p-2 rounded-lg shrink-0 transition-colors ${isEnabled ? config.bg + ' ' + config.color : 'bg-gray-200 text-gray-400'}`}>
-                                                                <Icon size={18} />
-                                                            </div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center justify-between mb-0.5">
-                                                                    <h4 className={`text-xs font-bold truncate ${isEnabled ? 'text-gray-800' : 'text-gray-500'}`}>{config.label}</h4>
-                                                                    <div className={`w-8 h-4 rounded-full p-0.5 transition-colors ${isEnabled ? 'bg-emerald-500' : 'bg-gray-300'}`}>
-                                                                        <div className={`w-3 h-3 bg-white rounded-full shadow-sm transition-transform ${isEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
-                                                                    </div>
-                                                                </div>
-                                                                <p className="text-[10px] text-gray-400 line-clamp-2 leading-tight">{config.desc}</p>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            
-                            <div className="flex items-center justify-center gap-2 text-xs text-gray-400 italic bg-gray-50 py-2 rounded-lg">
-                                <RefreshCw size={12} className="animate-spin-slow" />
-                                <span>Semua perubahan hak akses tersimpan secara otomatis dan berlaku real-time</span>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="p-6 rounded-2xl bg-purple-50/30 border border-purple-100">
-                            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-purple-100">
-                                <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center shadow-inner">
-                                    <Shield size={24} />
-                                </div>
-                                <div>
-                                    <h4 className="text-lg font-bold text-gray-800">{user.role}</h4>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <span className="relative flex h-2.5 w-2.5">
-                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                                        </span>
-                                        <p className="text-xs text-gray-500 font-medium">Status Akun: Aktif & Terverifikasi</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {['Menu Halaman', 'Fungsionalitas'].map((category) => (
-                                    <div key={category}>
-                                        <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                            {category === 'Menu Halaman' ? <LayoutDashboard size={14} /> : <Database size={14} />}
-                                            {category}
-                                        </h5>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {Object.entries(permissionConfig)
-                                                .filter(([_, config]) => config.category === category)
-                                                .map(([key, config]) => {
-                                                    const Icon = config.icon;
-                                                    const isEnabled = rolePermissions[user.role][key];
-                                                    return (
-                                                        <div key={key} className={`flex items-center gap-3 p-2.5 rounded-xl border ${isEnabled ? 'bg-white border-purple-100 shadow-sm' : 'bg-gray-50 border-transparent opacity-60'}`}>
-                                                            <div className={`p-1.5 rounded-lg ${isEnabled ? 'bg-purple-50 text-purple-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                                <Icon size={14} />
-                                                            </div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <span className={`text-xs font-bold block truncate ${isEnabled ? 'text-gray-700' : 'text-gray-400 line-through'}`}>
-                                                                    {config.label}
-                                                                </span>
-                                                            </div>
-                                                            {isEnabled ? (
-                                                                <Check size={14} className="text-emerald-500" strokeWidth={3} />
-                                                            ) : (
-                                                                <X size={14} className="text-gray-400" strokeWidth={3} />
-                                                            )}
-                                                        </div>
-                                                    );
-                                                })}
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="relative w-full md:w-64">
+                                <select
+                                    value={selectedRole}
+                                    onChange={(e) => setSelectedRole(e.target.value)}
+                                    className="w-full pl-4 pr-10 py-2.5 bg-white border border-purple-200 rounded-xl text-sm font-bold text-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-200 appearance-none cursor-pointer shadow-sm hover:border-purple-300 transition-all"
+                                >
+                                    <option value="Administrator EkoHajj">Administrator EkoHajj</option>
+                                    <option value="Eksekutif EkoHajj">Eksekutif EkoHajj</option>
+                                    <option value="Surveyor EkoHajj">Surveyor EkoHajj</option>
+                                </select>
+                                <ChevronRight size={16} className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-purple-500 pointer-events-none" />
                             </div>
                         </div>
-                    )}
-                </div>
-            </GlassCard>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {['Menu Halaman', 'Fungsionalitas'].map((category) => (
+                                <div key={category} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                                    <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+                                        <div className={`p-1.5 rounded-lg ${category === 'Menu Halaman' ? 'bg-blue-50 text-blue-600' : 'bg-indigo-50 text-indigo-600'}`}>
+                                            {category === 'Menu Halaman' ? <LayoutDashboard size={16} /> : <Database size={16} />}
+                                        </div>
+                                        <h5 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{category}</h5>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {Object.entries(permissionConfig)
+                                            .filter(([_, config]) => config.category === category)
+                                            .map(([key, config]) => {
+                                                const Icon = config.icon;
+                                                const isEnabled = rolePermissions[selectedRole][key];
+                                                return (
+                                                    <div 
+                                                        key={key} 
+                                                        onClick={() => handlePermissionToggle(selectedRole, key)}
+                                                        className={`flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer group ${isEnabled ? 'bg-white border-purple-200 shadow-md shadow-purple-50' : 'bg-gray-50 border-transparent hover:bg-gray-100'}`}
+                                                    >
+                                                        <div className={`p-2 rounded-lg shrink-0 transition-colors ${isEnabled ? config.bg + ' ' + config.color : 'bg-gray-200 text-gray-400'}`}>
+                                                            <Icon size={18} />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center justify-between mb-0.5">
+                                                                <h4 className={`text-xs font-bold truncate ${isEnabled ? 'text-gray-800' : 'text-gray-500'}`}>{config.label}</h4>
+                                                                <div className={`w-8 h-4 rounded-full p-0.5 transition-colors ${isEnabled ? 'bg-emerald-500' : 'bg-gray-300'}`}>
+                                                                    <div className={`w-3 h-3 bg-white rounded-full shadow-sm transition-transform ${isEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                                                </div>
+                                                            </div>
+                                                            <p className="text-[10px] text-gray-400 line-clamp-2 leading-tight">{config.desc}</p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <div className="flex items-center justify-center gap-2 text-xs text-gray-400 italic bg-gray-50 py-2 rounded-lg">
+                            <RefreshCw size={12} className="animate-spin-slow" />
+                            <span>Semua perubahan hak akses tersimpan secara otomatis dan berlaku real-time</span>
+                        </div>
+                    </div>
+                </GlassCard>
+            )}
 
             <div className="flex justify-center pt-8">
                 <button 
