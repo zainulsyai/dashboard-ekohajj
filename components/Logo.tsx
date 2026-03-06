@@ -19,7 +19,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 'md' }) => {
   return (
     <div className={`relative ${sizeClasses[size]} flex-shrink-0 flex items-center justify-center group cursor-default ${className}`}>
         <div className="absolute inset-0 bg-[#D4AF37] rounded-xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-        <div className="relative w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B4941F] rounded-xl flex items-center justify-center text-[#064E3B] shadow-xl border border-white/20 transform group-hover:scale-105 transition-transform duration-500 overflow-hidden p-1.5">
+        <div className="relative w-full h-full bg-white rounded-xl flex items-center justify-center text-[#064E3B] shadow-xl border border-white/20 transform group-hover:scale-105 transition-transform duration-500 overflow-hidden p-1.5">
             <img 
                 src={logoUrl} 
                 alt="Logo" 
