@@ -15,14 +15,14 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigate, onLogout }) => {
     const { 
         setBumbuMakkah, setBumbuMadinah, setRteData, setTenantData, 
         setExpeditionData, setTelecomData, setRiceData,
-        logoUrl, setLogoUrl
+        logoUrl, setLogoUrl,
+        darkMode, setDarkMode,
+        isEnglish, setIsEnglish
     } = useData();
     
     const { user, updateUser, users, updateUserById, addUser, deleteUser } = useUser();
 
     const [notifications, setNotifications] = useState(true);
-    const [darkMode, setDarkMode] = useState(false);
-    const [isEnglish, setIsEnglish] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isUserCardOpen, setIsUserCardOpen] = useState(false); // New User Card Modal

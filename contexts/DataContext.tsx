@@ -22,6 +22,10 @@ interface DataContextType {
   isLoading: boolean;
   logoUrl: string;
   setLogoUrl: React.Dispatch<React.SetStateAction<string>>;
+  darkMode: boolean;
+  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  isEnglish: boolean;
+  setIsEnglish: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -84,6 +88,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [riceData, setRiceData] = useState<RiceRecord[]>([]);
   const [telecomActive, setTelecomActive] = useState<Record<number, boolean>>({});
   const [logoUrl, setLogoUrl] = useState<string>("https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Lambang_Kementerian_Agama.png/723px-Lambang_Kementerian_Agama.png");
+  const [darkMode, setDarkMode] = useState(false);
+  const [isEnglish, setIsEnglish] = useState(false);
 
     useEffect(() => {
     const timer = setTimeout(() => {
@@ -419,7 +425,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       riceData, setRiceData,
       telecomActive, setTelecomActive,
       isLoading,
-      logoUrl, setLogoUrl
+      logoUrl, setLogoUrl,
+      darkMode, setDarkMode,
+      isEnglish, setIsEnglish
     }}>
       {children}
     </DataContext.Provider>
